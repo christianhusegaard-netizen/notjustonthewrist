@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not Just On The Wrist — A Watch Journal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Firebase SDK (compat v10) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #FAF8F5;
+            --bg-nav: rgba(250, 248, 245, 0.95);
+            --text: #1a1a1a;
+            --text-secondary: #5a5a5a;
+            --text-light: #8a8a8a;
+            --accent: #b8956a;
+            --accent-hover: #a07d55;
+            --border: #e5e0da;
+            --card-bg: #ffffff;
+            --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+            --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --max-width: 1200px;
+            --nav-height: 70px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--nav-height);
+            background: var(--bg-nav);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-inner {
+            width: 100%;
+            max-width: var(--max-width);
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .nav-logo {
+            font-family: var(--serif);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .nav-logo span {
+            color: var(--accent);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-link {
+            font-family: var(--sans);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: var(--accent);
+        }
+
+        .nav-search {
+            flex: 0 1 280px;
+            position: relative;
+        }
+
+        .nav-search input {
+            width: 100%;
+            padding: 8px 16px 8px 38px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--card-bg);
+            font-family: var(--sans);
+            font-size: 0.875rem;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .nav-search input:focus {
+            border-color: var(--accent);
+        }
+
+        .nav-search input::placeholder {
+            color: var(--text-light);
+        }
+
+        .nav-search svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--text-light);
+        }
+
+        /* ===== BRAND FILTER ===== */
+        .brand-filter-wrap {
+            margin-top: var(--nav-height);
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+            position: sticky;
+            top: var(--nav-height);
+            z-index: 900;
+        }
+
+        .brand-filter {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .brand-filter::-webkit-scrollbar { display: none; }
+
+        .brand-btn {
+            padding: 7px 18px;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            background: transparent;
+            font-family: var(--sans);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            letter-spacing: 0.02em;
+        }
+
+        .brand-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .brand-btn.active {
+            background: var(--text);
+            border-color: var(--text);
+            color: var(--bg);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        main {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* Homepage header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+
+        .page-header h1 {
+            font-family: var(--serif);
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        /* ===== ARTICLE GRID ===== */
+        .article-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .article-card {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .article-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .article-card-image {
+            width: 100%;
+            aspect-ratio: 3 / 2;
+            overflow: hidden;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .article-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .article-card:hover .article-card-image img {
+            transform: scale(1.03);
+        }
+
+        .article-card-brand {
+            font-family: var(--sans);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .article-card h2 {
+            font-family: var(--serif);
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+            margin-bottom: 10px;
+        }
+
+        .article-card-deck {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .article-card-meta {
+            margin-top: 14px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* No results */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        /* ===== ARTICLE PAGE ===== */
+        .article-page {
+            display: none;
+        }
+
+        .article-page.active {
+            display: block;
+        }
+
+        .article-page-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            cursor: pointer;
+            margin-bottom: 32px;
+            transition: color 0.2s;
+            font-weight: 500;
+        }
+
+        .article-page-back:hover {
+            color: var(--accent);
+        }
+
+        .article-hero {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 40px;
+            aspect-ratio: 16 / 10;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        .article-hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .article-content {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .article-content .brand-tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .article-content h1 {
+            font-family: var(--serif);
+            font-size: 2.75rem;
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
+
+        .article-content .deck {
+            font-family: var(--serif);
+            font-size: 1.25rem;
+            font-style: italic;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .article-content .meta {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 40px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .article-content .meta strong {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .article-body p {
+            font-size: 1.0625rem;
+            line-height: 1.8;
+            margin-bottom: 24px;
+            color: var(--text);
+        }
+
+        .article-body .pull-quote {
+            font-family: var(--serif);
+            font-size: 1.5rem;
+            font-style: italic;
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+            padding: 8px 0 8px 28px;
+            margin: 40px 0;
+            line-height: 1.5;
+        }
+
+        .article-body .inline-image {
+            width: 100%;
+            margin: 36px 0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .article-body .inline-image img {
+            width: 100%;
+            display: block;
+        }
+
+        .article-body .inline-image figcaption {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            text-align: center;
+            padding: 40px 24px;
+            border-top: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        footer .footer-name {
+            font-family: var(--serif);
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            :root { --nav-height: 60px; }
+
+            .nav-logo { font-size: 1.25rem; }
+
+            .nav-search { flex: 0 1 180px; }
+
+            .page-header h1 { font-size: 1.75rem; }
+            .page-header p { font-size: 0.95rem; }
+
+            .article-grid {
+                grid-template-columns: 1fr;
+                gap: 36px;
+            }
+
+            .article-card h2 { font-size: 1.3rem; }
+
+            .article-content h1 { font-size: 2rem; }
+            .article-content .deck { font-size: 1.1rem; }
+
+            .article-body .pull-quote { font-size: 1.2rem; }
+
+            .article-hero { aspect-ratio: 4 / 3; }
+        }
+
+        @media (max-width: 480px) {
+            .nav-search { display: none; }
+
+            .brand-filter { padding: 12px 16px; gap: 6px; }
+            .brand-btn { padding: 6px 14px; font-size: 0.75rem; }
+
+            main { padding: 32px 16px 60px; }
+
+            .page-header { margin-bottom: 36px; }
+            .page-header h1 { font-size: 1.5rem; }
+
+            .article-card h2 { font-size: 1.2rem; }
+
+            .article-content h1 { font-size: 1.6rem; }
+        }
+
+        /* ===== ABOUT PAGE ===== */
+        .about-page {
+            display: none;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .about-page.active {
+            display: block;
+        }
+
+        .about-page h1 {
+            font-family: var(--serif);
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .about-page .about-subtitle {
+            font-family: var(--serif);
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .about-page .about-divider {
+            width: 60px;
+            height: 2px;
+            background: var(--accent);
+            margin-bottom: 32px;
+        }
+
+        .about-page p {
+            font-size: 1.0625rem;
+            line-height: 1.8;
+            margin-bottom: 24px;
+            color: var(--text);
+        }
+
+        .about-page .about-signature {
+            font-family: var(--serif);
+            font-size: 1.25rem;
+            font-style: italic;
+            color: var(--accent);
+            margin-top: 40px;
+        }
+
+        /* ===== TRANSITIONS ===== */
+        .homepage { transition: opacity 0.3s ease; }
+        .article-page { transition: opacity 0.3s ease; }
+        .fade-out { opacity: 0; }
+
+        /* ===== LIKE BUTTON ===== */
+        .like-section {
+            border-top: 1px solid var(--border);
+            padding-top: 32px;
+            margin-top: 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .like-label {
+            font-family: var(--sans);
+            font-size: 0.78rem;
+            color: var(--text-light);
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+        }
+
+        .like-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border: 1.5px solid var(--border);
+            border-radius: 100px;
+            background: transparent;
+            cursor: pointer;
+            font-family: var(--sans);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .like-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(184, 149, 106, 0.06);
+        }
+
+        .like-btn.liked {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(184, 149, 106, 0.08);
+        }
+
+        .like-btn svg {
+            transition: transform 0.15s ease, fill 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .like-btn.liked svg {
+            fill: var(--accent);
+        }
+
+        .like-btn:active:not(:disabled) svg {
+            transform: scale(0.8);
+        }
+
+        .like-btn:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+
+        /* Like count on article grid cards */
+        .article-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            flex-wrap: wrap;
+        }
+
+        .article-card-meta-text {
+            flex: 1;
+        }
+
+        .card-like-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-light);
+            font-size: 0.78rem;
+            white-space: nowrap;
+        }
+
+        .card-like-count svg {
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="nav-inner">
+            <a class="nav-logo" onclick="showHomepage()">Not Just On The <span>Wrist</span></a>
+            <div class="nav-right">
+                <div class="nav-search">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" placeholder="Search articles..." id="searchInput" oninput="filterArticles()">
+                </div>
+                <a class="nav-link" onclick="showAbout()">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- BRAND FILTER -->
+    <div class="brand-filter-wrap">
+        <div class="brand-filter" id="brandFilter">
+            <button class="brand-btn active" data-brand="all" onclick="filterByBrand('all', this)">All</button>
+            <button class="brand-btn" data-brand="Rolex" onclick="filterByBrand('Rolex', this)">Rolex</button>
+            <button class="brand-btn" data-brand="Omega" onclick="filterByBrand('Omega', this)">Omega</button>
+            <button class="brand-btn" data-brand="Cartier" onclick="filterByBrand('Cartier', this)">Cartier</button>
+            <button class="brand-btn" data-brand="Tudor" onclick="filterByBrand('Tudor', this)">Tudor</button>
+            <button class="brand-btn" data-brand="Girard-Perregaux" onclick="filterByBrand('Girard-Perregaux', this)">Girard-Perregaux</button>
+            <button class="brand-btn" data-brand="Grand Seiko" onclick="filterByBrand('Grand Seiko', this)">Grand Seiko</button>
+            <button class="brand-btn" data-brand="G-Shock" onclick="filterByBrand('G-Shock', this)">G-Shock</button>
+            <button class="brand-btn" data-brand="Seiko" onclick="filterByBrand('Seiko', this)">Seiko</button>
+            <button class="brand-btn" data-brand="Personal Collection" onclick="filterByBrand('Personal Collection', this)">Personal Collection</button>
+        </div>
+    </div>
+
+    <!-- HOMEPAGE -->
+    <main>
+        <div class="homepage" id="homepage">
+            <div class="page-header">
+                <h1>Stories from the wrist</h1>
+                <p>Horological musings, personal reflections, and the watches that mark the moments.</p>
+            </div>
+            <div class="article-grid" id="articleGrid">
+                <!-- Articles rendered by JS -->
+            </div>
+        </div>
+
+        <!-- ARTICLE PAGE (single view) -->
+        <div class="article-page" id="articlePage">
+            <!-- Rendered by JS -->
+        </div>
+
+        <!-- ABOUT PAGE -->
+        <div class="about-page" id="aboutPage">
+            <h1>About</h1>
+            <p class="about-subtitle">The man behind the wrist</p>
+            <div class="about-divider"></div>
+            <p>My name is Christian Husegaard, and I am a Dane with an abiding passion for watches in all their forms — sport watches, dress watches, chronographs, and everything in between.</p>
+            <p>Not Just On The Wrist is a purely personal endeavour. I have no commercial involvement with any other websites, retailers, or grey market dealers. I don't accept sponsorships, and I don't broker watches. I write because I find horology genuinely fun and endlessly interesting — and because a good watch, like a good story, deserves to be shared.</p>
+            <p>This site is my way of connecting with fellow enthusiasts: people who understand why a particular dial texture catches the light just so, why a well-tapered bracelet matters, or why some watches simply feel right the moment they touch your skin. Whether you're a seasoned collector or just beginning to notice the world on your wrist, I hope you'll find something here that resonates.</p>
+            <p>Every piece I write comes from personal experience and honest opinion. The watches I cover are ones I've held, worn, and spent time thinking about. No press releases, no affiliate links — just one collector's perspective, offered freely to anyone who shares the fascination.</p>
+            <p class="about-signature">— Christian Husegaard, Copenhagen</p>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-name">Not Just On The Wrist</div>
+        &copy; 2026 Christian Husegaard. All rights reserved.
+    </footer>
+
+    <script>
+        // ===== FIREBASE CONFIG =====
+        // ⚠️  Replace the values below with your own Firebase project settings.
+        // See the setup instructions provided with this file.
+        const firebaseConfig = {
+            apiKey:            "AIzaSyB2XIfBvNlVDTNiDiv9MnhEG8h6HCzP4vE",
+            authDomain:        "notjustonthewrist.firebaseapp.com",
+            databaseURL:       "https://notjustonthewrist-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId:         "notjustonthewrist",
+            storageBucket:     "notjustonthewrist.firebasestorage.app",
+            messagingSenderId: "55723603730",
+            appId:             "1:55723603730:web:cc0d965802183688f165cb",
+            measurementId:     "G-YYTVXZP9HH"
+        };
+
+        let db = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+        } catch (e) {
+            console.warn('Firebase not configured yet. Like counts will not work until you add your Firebase credentials.');
+        }
+
+        // ===== LIKE HELPERS =====
+        function getLikedArticles() {
+            try { return JSON.parse(localStorage.getItem('njotw_liked') || '[]'); }
+            catch { return []; }
+        }
+
+        function hasLiked(articleId) {
+            return getLikedArticles().includes(articleId);
+        }
+
+        function setLiked(articleId, liked) {
+            const arr = getLikedArticles();
+            if (liked && !arr.includes(articleId)) {
+                arr.push(articleId);
+            } else if (!liked) {
+                const i = arr.indexOf(articleId);
+                if (i > -1) arr.splice(i, 1);
+            }
+            localStorage.setItem('njotw_liked', JSON.stringify(arr));
+        }
+
+        async function toggleLike(articleId) {
+            if (!db) return;
+            const btn       = document.getElementById(`like-btn-${articleId}`);
+            const countEl   = document.getElementById(`like-count-${articleId}`);
+            const labelEl   = document.getElementById(`like-label-${articleId}`);
+            if (!btn || !countEl) return;
+
+            btn.disabled = true;
+            const alreadyLiked = hasLiked(articleId);
+            const currentCount = parseInt(countEl.textContent) || 0;
+
+            // Optimistic UI update
+            if (alreadyLiked) {
+                setLiked(articleId, false);
+                btn.classList.remove('liked');
+                countEl.textContent = Math.max(0, currentCount - 1);
+                if (labelEl) labelEl.textContent = 'Like';
+            } else {
+                setLiked(articleId, true);
+                btn.classList.add('liked');
+                countEl.textContent = currentCount + 1;
+                if (labelEl) labelEl.textContent = 'Liked';
+            }
+
+            // Write to Firebase atomically
+            try {
+                await db.ref(`likes/${articleId}`).transaction(count => {
+                    const c = count || 0;
+                    return alreadyLiked ? Math.max(0, c - 1) : c + 1;
+                });
+                // Sync real count
+                const snap = await db.ref(`likes/${articleId}`).once('value');
+                const real = snap.val() || 0;
+                countEl.textContent = real;
+                // Also update the card count if visible
+                const cardEl = document.querySelector(`.card-likes-val[data-article-id="${articleId}"]`);
+                if (cardEl) cardEl.textContent = real;
+            } catch (e) {
+                console.error('Like update failed:', e);
+            }
+
+            btn.disabled = false;
+        }
+
+        // Load like counts for the article grid cards
+        async function loadCardLikeCounts() {
+            if (!db) return;
+            try {
+                const snap = await db.ref('likes').once('value');
+                const all = snap.val() || {};
+                document.querySelectorAll('.card-likes-val[data-article-id]').forEach(el => {
+                    const id = parseInt(el.dataset.articleId);
+                    el.textContent = all[id] !== undefined ? all[id] : 0;
+                });
+            } catch (e) {
+                console.warn('Could not load like counts:', e);
+            }
+        }
+
+        // Load like count for the currently open article
+        async function loadArticleLikeCount(articleId) {
+            if (!db) return;
+            try {
+                const snap = await db.ref(`likes/${articleId}`).once('value');
+                const count = snap.val() || 0;
+                const el = document.getElementById(`like-count-${articleId}`);
+                if (el) el.textContent = count;
+            } catch (e) {
+                console.warn('Could not load like count:', e);
+            }
+        }
+
+        // ===== ARTICLE DATA =====
+        const articles = [
+            {
+                id: 17,
+                title: "Rolex Datejust 41 Ref. 126300 — The Honest Watch",
+                deck: "In an era of waiting lists and status plays, the Datejust 41 with smooth bezel and bright blue dial quietly makes the case that the best everyday watch is the one you never have to think twice about wearing.",
+                brand: "Rolex",
+                tags: ["Rolex", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "April 1, 2026",
+                image: "images/rolex-datejust-41-126300.jpg",
+                body: `
+                    <p>There is a particular kind of confidence that comes not from announcing yourself, but from having nothing to prove. The Rolex Datejust 41 in Oystersteel — reference 126300, smooth bezel, bright blue dial, Oyster bracelet — is that confidence made tangible. It does not shout. It does not flash. It simply sits on the wrist, does what it has always done, and lets you get on with your day.</p>
+
+                    <p>In a personal collection that includes two-tone Rolesor pieces, a gold Omega Constellation, and the unmistakable flash of the GMT-Master II 'Zombie', the Datejust 41 occupies a different register entirely. This is the watch you reach for when the occasion demands nothing in particular — which, in practice, means it is the watch you reach for most often. It pairs with a business suit without a second thought. It survives a weekend in denim without irony. It is, in the truest sense, the everyday watch.</p>
+
+                    <div class="pull-quote">"The smooth bezel Datejust doesn't ask to be recognised. It asks only to be worn — and on that basis, it earns its place on the wrist every single day."</div>
+
+                    <p>The choice of the smooth bezel over the more familiar fluted version is significant, and deliberately understated. Where the fluted bezel catches attention, the smooth bezel deflects it. Polished to a mirror finish in Rolex's Oystersteel — the proprietary 904L alloy that resists corrosion and retains its lustre with remarkable tenacity — it gives the 126300 a cleaner, more modern profile. The 41mm case sits exactly right: large enough to feel contemporary, measured enough to wear without concession under a cuff. Combined with the Oyster bracelet's broad, flat links and brushed centre sections, the whole composition reads as confident restraint rather than studied minimalism.</p>
+
+                    <p>The dial, however, is where this particular example earns its character. Rolex's bright blue is a colour that rewards patience. In flat light it reads as a deep, serious navy. In direct sunlight, the sunburst finishing catches and radiates something closer to sapphire — almost electric, wholly alive. The applied baton hour markers, polished and bevelled, anchor the dial in legibility without cluttering it, and the date at three o'clock — magnified through Rolex's Cyclops lens — remains one of the most practical small complications in watchmaking. On the wrist, worn against blue and white stripe shirting as pictured, the dial and the fabric conduct a quiet conversation that feels entirely deliberate.</p>
+
+                    <p>Beneath the case, the Caliber 3235 represents Rolex's most capable movement to date. The 70-hour power reserve means the watch survives a long weekend off the wrist without drama. Certified as a Superlative Chronometer — Rolex's own standard, stricter than COSC, verified after casing — it maintains accuracy to ±2 seconds per day in real-world conditions. The Oyster bracelet's Oysterclasp with Easylink extension allows 5mm of fine adjustment on the fly, which matters more than collectors typically admit: a watch that fits perfectly is a watch that gets worn.</p>
+
+                    <p>What strikes me most about the Datejust 41, living with it alongside more visually emphatic pieces, is how rarely it lets you down. It is not the watch you photograph first. It is not the watch guests notice across a dinner table. But it is consistently, quietly, exactly right — and there is a maturity to appreciating that distinction that comes only after you have worn a few watches that tried harder and delivered less.</p>
+
+                    <p>The reference 126300 with smooth bezel is not the Datejust that makes the headlines. That role belongs to the Wimbledon dials, the meteorite, the gem-set bezels. This version exists in a different conversation — one about honesty, versatility, and the particular pleasure of a watch that earns its keep not on a single occasion but across every one of them.</p>
+                `
+            },
+            {
+                id: 16,
+                title: "Seiko Premier Kinetic Perpetual SNP044P1 — The Quiet Engineer",
+                deck: "A gold-tone dress watch with a kinetic heart and a perpetual calendar mind — Seiko's Premier proves that Japanese ingenuity needs no Swiss postcode.",
+                brand: "Seiko",
+                tags: ["Seiko", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "March 23, 2026",
+                image: "images/seiko-premier-kinetic.jpg",
+                body: `
+                    <p>There is a particular kind of horological satisfaction that comes from wearing a watch most people will underestimate. The Seiko Premier Kinetic Perpetual SNP044P1 is that watch. Behind its warm gold-tone case and classical dial lies a calibre — the Seiko 7D48 — that contains 232 parts and a philosophy of timekeeping that is uniquely, defiantly Japanese.</p>
+
+                    <p>The Kinetic system is Seiko's elegant answer to a question no one else thought to ask: what if we took the rotor from an automatic watch but used it to generate electricity instead of winding a mainspring? The weighted rotor spins with the wearer's movement, driving a tiny generator that charges a capacitor — no battery replacement, no winding crown ritual, just the quiet conversion of motion into energy. It is quartz precision delivered through mechanical means, and it remains one of the most ingenious hybrid concepts in watchmaking.</p>
+
+                    <div class="pull-quote">"The Kinetic Perpetual is Seiko's quiet masterpiece — a watch that thinks in leap years and runs on the energy of your own movement."</div>
+
+                    <p>The 'Perpetual' in the name refers not to the power source but to the calendar. This is a true perpetual calendar, programmed to account for months of 28, 29, 30, and 31 days — including leap years — without manual correction until the year 2100. The oversized dual-window date display at twelve o'clock, the month indicator at six, and the day-of-week sub-dial work in concert to track time with an intelligence that belies the watch's modest positioning. An ultrasonic motor driving 101 mechanical gears governs the calendar — a level of micro-engineering that would earn applause in any Swiss atelier.</p>
+
+                    <p>On the wrist, the SNP044P1 presents itself with a warmth that photographs like this one capture beautifully. The gold-tone stainless steel case — approximately 42mm — catches lamplight with the kind of glow that suggests something more precious than its materials alone would warrant. The silvered dial, with its guilloche-textured centre and Roman numeral chapter ring, strikes a balance between classical formality and quiet complexity. Against a brown alligator-pattern leather strap, the whole composition reads as dressy without being stiff.</p>
+
+                    <p>Perhaps the most remarkable feature is one you'll never see in action: the auto-relay function. If the watch is left unworn, the hands stop after twenty-four hours to conserve power — but the internal calendar keeps counting silently for up to four years. Pick the watch up after weeks in a drawer, and the hands snap forward to the correct time and date as if nothing happened. It is, in its own quiet way, one of the most practical complications in all of watchmaking.</p>
+
+                    <p>The Seiko Premier Kinetic Perpetual will never appear on a waiting list. It will never be the subject of breathless Instagram posts or auction house records. But for the collector who has come to appreciate that true horological innovation is not the exclusive province of Swiss valley towns, this watch is a revelation — proof that ingenuity, when paired with conviction, transcends geography and price point alike.</p>
+                `
+            },
+            {
+                id: 15,
+                title: "G-Shock 'Frogman' GWF-D1000 — The Digital Diver That Refuses to Quit",
+                deck: "With its triple sensor, ISO diver's certification, and unapologetic bulk, the GWF-D1000 is a digital tool watch taken to its logical extreme.",
+                brand: "G-Shock",
+                tags: ["G-Shock", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "March 23, 2026",
+                image: "images/gshock-frogman-gwfd1000.jpg",
+                body: `
+                    <p>There is a particular kind of watch collector who, after years of polished cases and exhibition casebacks, finds himself drawn to something entirely different — something that doesn't care about finishing, doesn't care about tradition, and doesn't care whether you think it's beautiful. The Casio G-Shock Frogman GWF-D1000 is that something.</p>
+
+                    <p>The Frogman lineage has always occupied a special place within the G-Shock catalogue. While other G-Shocks are shock-resistant watches that happen to handle water, the Frogman is an ISO 6425-certified diver's instrument first and a G-Shock second. The GWF-D1000 takes that commitment to its most extreme expression: a triple sensor array — compass, thermometer, and depth gauge — housed in a case that could survive re-entry.</p>
+
+                    <div class="pull-quote">"The Frogman doesn't ask to be admired. It asks to be used — and then used harder."</div>
+
+                    <p>The design language is pure function. Every protrusion on the case has a purpose: the bezel screws, the oversized buttons with their knurled guards, the screw-lock caseback rated to withstand deep-sea pressure, and the blue accents that exist not for decoration but for legibility in the darkness of deep water. The 'FROGMAN' branding on the case and 'TRIPLE SENSOR' on the lower bezel are statements of capability, not branding exercises.</p>
+
+                    <p>At 200 metres of water resistance with a depth gauge readable to 80 metres, the GWF-D1000 is a genuine tool for divers who need real-time data on their wrist. The compass bearing, water temperature, and current depth are available at the press of a button — information that, in the right context, is not merely useful but essential. Multiband 6 atomic timekeeping and Tough Solar power mean the watch essentially maintains itself.</p>
+
+                    <p>On the wrist, there is no pretending: the GWF-D1000 is substantial. It commands attention not through precious metals or hand-polished anglage, but through sheer engineering conviction. It is the antithesis of everything a dress watch represents — and for certain collectors, at certain moments, that is precisely the point.</p>
+
+                    <p>The Frogman GWF-D1000 is a reminder that horology is not exclusively the domain of Swiss movements and Geneva stripes. Sometimes, the most interesting watches are the ones built in factories rather than ateliers — watches that measure their worth not in complications per square centimetre, but in the number of environments they can survive without complaint.</p>
+                `
+            },
+            {
+                id: 14,
+                title: "G-Shock 'Frogman' GWF-A1000 — Analog Goes Deep",
+                deck: "Casio's first analog Frogman trades the digital display for sweeping hands and a carbon-reinforced case, bringing a new dimension to the iconic dive series.",
+                brand: "G-Shock",
+                tags: ["G-Shock", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "March 23, 2026",
+                image: "images/gshock-frogman-gwfa1000.jpg",
+                body: `
+                    <p>For decades, the G-Shock Frogman was defined by its digital display — a backlit LCD readout surrounded by enough resin and steel to survive a depth charge. Then, in a move that surprised even devoted G-Shock collectors, Casio released the GWF-A1000: the first Frogman with an analog dial. It was a statement. And it was a good one.</p>
+
+                    <p>The GWF-A1000 takes the Frogman's established credentials — ISO 200m diver's rating, Tough Solar power, Multiband 6 atomic sync — and wraps them in a carbon fibre-reinforced resin case with an analog face that gives the watch an entirely different personality. Where the digital Frogman is clinical and data-driven, the analog version is visceral. The sweeping seconds hand, the bold hour markers, the three inset sub-dials — this is a watch that wants to be read at a glance, even in turbulent water.</p>
+
+                    <div class="pull-quote">"The analog Frogman proves that G-Shock can evolve its most iconic lines without losing the qualities that made them iconic in the first place."</div>
+
+                    <p>The case architecture is fascinating. Casio has used carbon fibre-reinforced resin to reduce weight while maintaining the shock resistance that is non-negotiable for a G-Shock. The result is a watch that, despite its visual mass, sits lighter on the wrist than you'd expect. The knurled crown at three o'clock and the button guards at two and four give it a mechanical, almost industrial character that feels right for a tool watch of this calibre.</p>
+
+                    <p>The black dial with its yellow accents creates a legibility that is both immediate and purposeful. The tide graph indicator and dual time zone display — critical information for any serious diver or traveller — are integrated into the sub-dials without cluttering the primary time display. It is information-dense without being overwhelming, which is a design challenge that Casio has navigated with impressive discipline.</p>
+
+                    <p>What strikes me most about the GWF-A1000 is what it represents for G-Shock as a brand. This is not a company resting on its reputation for toughness. This is a company that looked at its most specialised dive watch and asked: what if we reimagined it entirely? The answer, sitting on a reflective surface with that yellow Frogman text catching the light, speaks for itself.</p>
+
+                    <p>For the collector who appreciates G-Shock's engineering philosophy but has always wished for an analog face, the GWF-A1000 is the Frogman you've been waiting for. It is everything the name promises — and something genuinely new.</p>
+                `
+            },
+            {
+                id: 13,
+                title: "Omega Constellation 38mm in 18K Sedna Gold — Warm Light, Quiet Luxury",
+                deck: "Omega's proprietary rose gold alloy meets the Constellation's iconic design language in a watch that radiates understated warmth from every angle.",
+                brand: "Omega",
+                tags: ["Omega", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "March 23, 2026",
+                image: "images/omega-constellation-sedna.jpg",
+                body: `
+                    <p>There are watches that announce themselves the moment they enter a room, and there are watches that reveal themselves slowly — in a shift of light across a dial, in the warmth of a metal against skin, in the quiet satisfaction of wearing something that needs no explanation. The Omega Constellation in 18K Sedna Gold belongs firmly in the second category.</p>
+
+                    <p>Sedna Gold is Omega's proprietary rose gold alloy, blended with palladium and copper to achieve a warmth of tone that resists the fading that plagues conventional rose gold over time. It is a material innovation that serves an aesthetic purpose: this Constellation will look exactly this warm, this alive, decades from now. In a world of planned obsolescence, that kind of permanence feels almost radical.</p>
+
+                    <div class="pull-quote">"The Constellation in Sedna Gold doesn't demand attention — it receives it, naturally and inevitably, from anyone who appreciates the difference between loud and beautiful."</div>
+
+                    <p>At 38mm, this Constellation occupies the perfect middle ground. It is not a statement piece, nor is it a wallflower. On the wrist — here, against a houndstooth cuff and a hint of blue shirting — it has a presence that is confident without being assertive. The silvered dial, with its subtle sunburst finish, plays against the Sedna Gold case and polished applied hour markers in a way that shifts constantly with the light — while Roman numerals engraved on the bezel add a classical frame to the whole composition. Morning sun draws out champagne tones; evening light deepens everything to amber.</p>
+
+                    <p>The Constellation's signature design elements — the half-moon facets on the case band, the claws gripping the bezel at three and nine o'clock — are among the most distinctive in all of watchmaking. They date back to 1982's Manhattan collection and have become as synonymous with the Constellation as the crown logo on the dial. In Sedna Gold, these details are elevated from design signatures to sculptural elements, catching and holding light in ways that polished steel simply cannot replicate.</p>
+
+                    <p>The brown leather strap is an inspired pairing. Where a metal bracelet might push this watch toward the formal, the leather grounds it — makes it wearable with a weekend blazer as easily as with business dress. The texture of the alligator pattern creates a dialogue with the polished case surfaces, each material enhancing the other.</p>
+
+                    <p>The Omega Constellation has been in continuous production since 1952, yet it remains one of the brand's most underappreciated lines among enthusiast circles. The Speedmaster claims the heritage, the Seamaster claims the adventure, and the Constellation quietly claims something harder to define: an elegance that is neither vintage nor modern, neither dressy nor casual, but simply, enduringly, right.</p>
+                `
+            },
+            {
+                id: 12,
+                title: "Rolex GMT-Master II 'Rootbeer' — Two-Tone with a Darker Edge",
+                deck: "Steel and Everose Gold meet a brown-and-black Cerachrom bezel in a GMT-Master II that trades the Zombie's warmth for something moodier and more complex.",
+                brand: "Rolex",
+                tags: ["Rolex", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "March 23, 2026",
+                image: "images/rolex-gmt-rootbeer.jpg",
+                body: `
+                    <p>If the GMT-Master II 'Zombie' in steel and yellow gold is the extrovert of the two-tone GMT family, the 'Rootbeer' in Oystersteel and Everose Gold is its more contemplative sibling. The nickname comes from the brown-and-black Cerachrom bezel — a colour combination that evokes the dark, caramel tones of the American soft drink — and it is a pairing that gives this watch a character entirely its own.</p>
+
+                    <p>Everose Gold is Rolex's proprietary rose gold alloy, developed in-house and patented for its resistance to fading. Where yellow gold is immediate and declarative, Everose is subtle and warm — a pink-tinged warmth that reads as sophisticated rather than flashy. Against the brown and black of the Cerachrom bezel, the Everose tones create a colour palette that feels autumnal, rich, and surprisingly versatile.</p>
+
+                    <div class="pull-quote">"The Rootbeer finds its magic in the space between gold and shadow — a two-tone watch that feels less like luxury and more like mood."</div>
+
+                    <p>The black dial anchors everything. The Everose gold hands and hour markers emerge from the darkness with a warmth that feels organic — as though the gold were lit from within rather than simply applied. The Cyclops-magnified date at three o'clock and the Everose gold arrow-tipped GMT hand provide the functional details that make this a traveller's watch, but it's the overall atmosphere of the dial that lingers in the mind.</p>
+
+                    <p>On the Oyster bracelet with its Everose centre links, the Rootbeer has a weight and presence that is unmistakably Rolex. The brushed steel outer links provide the visual contrast that prevents the gold from dominating, and the Oysterlock clasp with its Easylink extension allows for fine-tuning that makes all-day wear effortless. This is a bracelet designed by people who understand that a watch is worn, not merely looked at.</p>
+
+                    <p>Wearing the Rootbeer against a brown leather jacket, as captured here, reveals how naturally this watch integrates with earth tones and textured fabrics. It is a GMT-Master II that dresses down as convincingly as it dresses up — equally at home with corduroy and denim as it is with wool and linen. That range is not something every two-tone watch can claim.</p>
+
+                    <p>The GMT-Master II Rootbeer occupies a unique position in the Rolex sport watch catalogue. It is neither the most recognisable nor the most hyped, but it may be the most characterful. For the collector who has worn the Pepsi, considered the Batman, and admired the Zombie, the Rootbeer offers something different — a warmth that is deeper, a mood that is darker, and a personality that reveals itself not at first glance, but over time.</p>
+                `
+            },
+            {
+                id: 11,
+                title: "Cartier Santos Chronograph XL — The Aviator's Square",
+                deck: "With its bold ADLC bezel, rubber strap, and twin registers, the Santos Chronograph XL proves that Cartier can build a sports watch with genuine muscle.",
+                brand: "Cartier",
+                tags: ["Cartier", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "March 22, 2026",
+                image: "images/cartier-santos-chrono.png",
+                body: `
+                    <p>The Cartier Santos has always occupied a unique position in horology. It is, by most credible accounts, the first purpose-built wristwatch — created in 1904 for the aviator Alberto Santos-Dumont, who needed to check the time while keeping both hands on the controls of his aircraft. That origin story is not marketing mythology; it is documented history. And it gives the Santos a legitimacy that few watches can match.</p>
+
+                    <p>The Santos Chronograph XL in ADLC-treated steel takes that heritage and pushes it somewhere decidedly modern. The black bezel and rubber strap transform what could be a conservative dress watch into something with real visual weight. The exposed screws on the bezel — a Santos signature since the redesign — read as industrial and intentional, a reminder that this watch was born from function, not fashion.</p>
+
+                    <div class="pull-quote">"The Santos Chronograph doesn't just reference aviation history — it inhabits it. Every line, every screw, every proportion speaks of machines built to perform."</div>
+
+                    <p>The silvered dial is beautifully executed. The two chronograph sub-dials at three and nine o'clock are recessed just enough to create depth without clutter, and the Roman numeral hour markers — a Cartier constant — maintain the maison's identity even in this sportier context. The date aperture at six o'clock is discreet and well-integrated, a detail that lesser designs often fumble.</p>
+
+                    <p>On the wrist, the XL case fills the space with authority. The QuickSwitch system, allowing tool-free strap changes between the rubber and an included steel bracelet, is one of those practical innovations that sounds like a gimmick until you use it daily. The SmartLink system on the bracelet is equally clever — half-link adjustments without a trip to the jeweller.</p>
+
+                    <p>What strikes me most about this photograph is how naturally the Santos sits against a shirt cuff. Despite its chronograph complications and sporty strap, it retains an elegance that is unmistakably Cartier. This is not a dive watch pretending to be dressy, or a dress watch pretending to be tough. It is simply, confidently, both.</p>
+
+                    <p>In a collection increasingly defined by round cases and rotating bezels, the Santos Chronograph XL is a welcome disruption — a square peg in a round-watch world, and all the more interesting for it.</p>
+                `
+            },
+            {
+                id: 10,
+                title: "Rolex Sky-Dweller 42mm — The Traveller's Complication",
+                deck: "Two-tone Rolesor, an annual calendar, and a dual time zone — the Sky-Dweller is Rolex's most complicated wristwatch, and arguably its most underappreciated.",
+                brand: "Rolex",
+                tags: ["Rolex", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "March 22, 2026",
+                image: "images/rolex-sky-dweller.png",
+                body: `
+                    <p>The Rolex Sky-Dweller is the quiet intellectual of the Rolex catalogue. While the Submariner and Daytona dominate conversations and waiting lists, the Sky-Dweller sits patiently in the corner, housing more mechanical complexity than any other current-production Rolex — and waiting for the collector who appreciates substance over celebrity.</p>
+
+                    <p>At 42mm in Oystersteel and Yellow Gold, this Sky-Dweller commands the wrist with a presence that is both authoritative and refined. The fluted bezel is not merely decorative — it serves as the interface for the Calibre 9001's ingenious setting mechanism. Rotating the bezel selects one of three setting positions, while the crown adjusts the chosen function. It is Rolex's answer to the question of how to control a complex watch without adding pushers or additional crowns, and it works beautifully.</p>
+
+                    <div class="pull-quote">"The Sky-Dweller is proof that Rolex can do more than build indestructible tool watches — it can build genuine haute horlogerie, disguised in a sport watch case."</div>
+
+                    <p>The black dial is a masterpiece of information density handled with restraint. The off-centre disc for the second time zone, read through a small aperture beneath an inverted triangle at twelve o'clock, is subtle enough to miss if you're not looking for it. The annual calendar — indicated by twelve small windows around the chapter ring, with the current month highlighted in red — is so discreet that most people will never notice it. And that, somehow, makes it more impressive, not less.</p>
+
+                    <p>The Rolesor execution adds warmth and visual complexity to a watch that could, in full steel, risk appearing austere. The gold centre links on the Oyster bracelet catch the light in a way that creates a conversation with the fluted gold bezel above. Against the black dial, the gold hands and hour markers glow with a richness that feels earned rather than ostentatious.</p>
+
+                    <p>Wearing this Sky-Dweller with a textured sport coat, I'm struck by how well it bridges the gap between complication watch and daily wearer. The annual calendar means you set it once in March and forget about it until February. The dual time zone is genuinely useful for anyone who communicates across borders. And the Rolex build quality means none of this complexity comes at the expense of reliability.</p>
+
+                    <p>The Sky-Dweller will never have the cultural cachet of a Daytona or the universal recognition of a Submariner. But for the collector who has moved past the obvious choices and wants a watch that rewards close attention, it may be the most satisfying Rolex of them all.</p>
+                `
+            },
+            {
+                id: 9,
+                title: "Tudor Black Bay Chronograph 'White Panda' — Racing Heritage, Refined",
+                deck: "With its crisp white dial and black sub-registers, Tudor's Black Bay Chronograph channels vintage motorsport chronographs while remaining unmistakably modern.",
+                brand: "Tudor",
+                tags: ["Tudor", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "March 22, 2026",
+                image: "images/tudor-black-bay-chrono.png",
+                body: `
+                    <p>The 'panda' dial has become one of the most sought-after configurations in the chronograph world — that high-contrast combination of a light dial with dark sub-registers that graced the wrists of racing drivers and astronauts in the 1960s and 70s. Tudor, with its deep roots in tool-watch design, was always going to do this well. The Black Bay Chronograph in white proves they've done it superbly.</p>
+
+                    <p>The dial is the hero. The opaline white surface has a subtle warmth that prevents it from feeling clinical, and the two black sub-dials at three and nine o'clock create precisely the contrast that gives panda chronographs their enduring appeal. The applied hour markers, the date window at six, the tachymeter scale on the black aluminium bezel — every element reads clearly and sits in its proper place. There is no clutter here, only purpose.</p>
+
+                    <div class="pull-quote">"The White Panda is Tudor at its most confident — a chronograph that doesn't need to shout about its racing DNA because it wears it so naturally."</div>
+
+                    <p>At 41mm, the Black Bay Chronograph occupies a sweet spot that many competitors miss. It's large enough to give the chronograph sub-dials room to breathe, but restrained enough to avoid the overwrought proportions that plague so many modern chronographs. The case thickness, always a challenge with column-wheel chronograph movements, is managed well — this is a watch you can wear under a shirt cuff, which is more than you can say for many of its peers.</p>
+
+                    <p>The in-house Manufacture Calibre MT5813, developed in partnership with Breitling, is a column-wheel chronograph with a silicon balance spring and a 70-hour power reserve. It is COSC-certified and, importantly, it feels right in use — the pusher action is crisp and defined, with none of the mushiness that can afflict lesser chronograph movements. Starting, stopping, and resetting the chronograph is a tactile pleasure.</p>
+
+                    <p>On the steel bracelet, the White Panda has a vintage motorsport quality that photographs like this one only amplify. There is something about a panda chronograph on a wrist — particularly shot from below, as here — that evokes pit lanes and timing boards and an era when watches were instruments first and fashion statements a distant second.</p>
+
+                    <p>Tudor has, once again, delivered a watch that punches well above its price point. The Black Bay Chronograph White Panda is not merely a good value proposition — it is a genuinely excellent chronograph that happens to cost less than most of its competitors. For the collector who appreciates racing heritage without the racing price tag, this is the one.</p>
+                `
+            },
+            {
+                id: 8,
+                title: "Rolex Sea-Dweller Deepsea 44mm — Engineering for the Abyss",
+                deck: "At 44mm and rated to 3,900 metres, the Deepsea is Rolex's most extreme dive watch — a monument to over-engineering that somehow still works on dry land.",
+                brand: "Rolex",
+                tags: ["Rolex", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "March 22, 2026",
+                image: "images/rolex-seadweller-deepsea.png",
+                body: `
+                    <p>There is a category of watch that exists not because it needs to, but because it can. The Rolex Sea-Dweller Deepsea belongs squarely in that category. Rated to 3,900 metres — a depth at which the pressure would crush most man-made objects — the Deepsea is an exercise in extreme engineering wrapped in the familiar language of a Rolex sport watch. It is absurd, magnificent, and utterly compelling.</p>
+
+                    <p>At 44mm, the Deepsea makes no attempt at subtlety. This is a large watch by any standard, and a thick one too — the Ringlock System, Rolex's patented case architecture that uses a nitrogen-alloyed steel ring and a 5.5mm-thick sapphire crystal to withstand deep-sea pressures, adds meaningful height to the case. On the wrist, you feel it. You are always aware that you are wearing a Deepsea. Whether that's a virtue or a vice depends entirely on your temperament.</p>
+
+                    <div class="pull-quote">"The Deepsea is not a watch you wear to blend in. It is a watch you wear because you believe that purpose and presence are not mutually exclusive."</div>
+
+                    <p>The black dial is pure functionality. Large luminous hour markers, thick Mercedes hands, and the crisp white Sea-Dweller text — a clean, understated nod to the helium escape valve heritage that separates the Sea-Dweller lineage from the Submariner. The Cyclops lens over the date at three o'clock is present and correct, magnifying without apology. Legibility, in any light and at any angle, is beyond reproach.</p>
+
+                    <p>The Oyster bracelet fitted to the Deepsea is a different beast to the one found on the Submariner. Wider, heavier, with solid end links that lock into the case with an almost architectural precision. The Glidelock extension system, allowing up to 20mm of micro-adjustment, is not merely convenient — on a watch of this size, it is essential. The bracelet drapes and conforms to the wrist with a fluidity that seems at odds with its mass.</p>
+
+                    <p>Wearing the Deepsea with a houndstooth blazer, as I did for this photograph, is a deliberate choice — and perhaps a slightly provocative one. This is a tool watch in the purest sense, designed for saturation divers and deep-ocean professionals. Pairing it with tailored cloth is a way of saying that great engineering deserves to be seen, not hidden away waiting for an expedition that may never come.</p>
+
+                    <p>The Sea-Dweller Deepsea will never be Rolex's bestseller, and it doesn't need to be. It exists as a statement of capability — proof that the same company that makes elegant Datejusts and refined Day-Dates can also build something that would survive the Mariana Trench. For the collector who values engineering superlatives and doesn't mind a watch that announces its presence, the Deepsea is an experience unlike anything else on the wrist.</p>
+                `
+            },
+            {
+                id: 7,
+                title: "Rolex Submariner 'Bluesy' — The Two-Tone Diver That Won Me Over",
+                deck: "Steel and gold, a sunburst blue dial, and 300 metres of water resistance — the Rolesor Submariner is Rolex at its most confidently luxurious.",
+                brand: "Rolex",
+                tags: ["Rolex", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "March 22, 2026",
+                image: "images/rolex-submariner-bluesy.png",
+                body: `
+                    <p>If the GMT-Master II 'Zombie' proved that two-tone Rolex deserves a second look, the Submariner Date in Oystersteel and Yellow Gold — the 'Bluesy' — makes the case that it deserves a standing ovation. This is a watch that should not work as well as it does. A luxury dive watch in steel and gold sounds, on paper, like a contradiction. In practice, it is one of the most charismatic watches Rolex has ever produced.</p>
+
+                    <p>The royal blue sunburst dial is the centrepiece. Rolex has always had an extraordinary command of blue — from the deep black-blue of the vintage 16613 to the vivid electric tones of recent Datejust dials — but this particular shade hits a perfect balance between richness and restraint. It shifts with the light: almost navy in shadow, vivid and alive in sunshine, always arresting.</p>
+
+                    <div class="pull-quote">"The Bluesy is proof that a dive watch can be both a serious tool and an object of genuine beauty — and that there is no contradiction between the two."</div>
+
+                    <p>The Cerachrom bezel in blue ceramic, with its gold-filled numerals, frames the dial with a material that is virtually scratchproof and completely fade-resistant. It is a quietly brilliant piece of engineering that ensures the watch will look exactly this good in twenty years. The bezel action itself is superb — 120 clicks of precisely machined resistance, smooth but definitive, with zero backplay.</p>
+
+                    <p>On the wrist, the 41mm case sits with the authority you'd expect from a Submariner. The Oyster bracelet in Rolesor has a visual weight that the full steel version lacks — those polished gold centre links catch the light and create a rhythm that draws the eye down from the case. The Glidelock clasp, allowing micro-adjustments without tools, remains one of the best clasp systems in the industry.</p>
+
+                    <p>I'll admit that I came to the Bluesy with some scepticism. Two-tone dive watches felt like relics of an era I wasn't particularly nostalgic for. But sitting here now, the watch on my wrist, a Danish novel beneath it and afternoon light catching the gold, I understand what Rolex understood all along: that some combinations are not trends to be debated but facts to be accepted. Blue and gold is one of them.</p>
+
+                    <p>The Submariner 'Bluesy' is not the most subtle watch in the collection. It is not trying to be. What it offers instead is joy — the pure, uncomplicated pleasure of wearing something beautiful that also happens to be built to survive anything you might put it through. And in a hobby that can sometimes take itself too seriously, that joy is worth celebrating.</p>
+                `
+            },
+            {
+                id: 5,
+                title: "Girard-Perregaux Laureato 42mm — The Connoisseur's Alternative",
+                deck: "With its stunning green clous de Paris dial and octagonal bezel, the Laureato offers a luxurious integrated bracelet experience for those who dare to look beyond the obvious.",
+                brand: "Girard-Perregaux",
+                tags: ["Girard-Perregaux", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "March 22, 2026",
+                image: "images/girard-perregaux-laureato.png",
+                body: `
+                    <p>In the world of luxury integrated-bracelet sport watches — a category that has become, for better or worse, the defining obsession of modern collecting — the conversation tends to orbit the same three or four names. The Royal Oak. The Nautilus. The Overseas. And while those watches deserve every syllable of praise they receive, the fixation on them has created a blind spot. The Girard-Perregaux Laureato lives in that blind spot, and it is magnificent.</p>
+
+                    <p>The Laureato 42mm in green is a watch that photographs well but must be seen in the metal to be truly appreciated. The dial is not simply green — it is a tapestry of tiny raised pyramids, the famed clous de Paris pattern, executed with a precision that catches and scatters light in constantly shifting ways. In direct sunlight, it blazes. Under office lighting, it deepens to an almost forest tone. At dusk, it turns nearly black. It is, in a word, alive.</p>
+
+                    <div class="pull-quote">"The Laureato doesn't chase trends or trade on hype. It offers something increasingly rare in modern watchmaking: genuine substance without the theatre."</div>
+
+                    <p>The octagonal bezel — polished to a mirror finish and set against a brushed case middle — gives the Laureato its architectural identity. It's a design that dates back to 1975, making it a contemporary of the Royal Oak, though it has never enjoyed the same commercial mythology. Whether that's a failing of marketing or a gift to the discerning collector is a matter of perspective. I lean firmly toward the latter.</p>
+
+                    <p>At 42mm, this Laureato wears with authority but not aggression. The integrated bracelet flows from the case with a seamlessness that speaks to the quality of engineering beneath the surface. The links alternate between polished and brushed surfaces, creating a visual rhythm that is elegant without being busy. The deployant clasp is solid and reassuring — no flex, no rattle, just a confident click.</p>
+
+                    <p>Girard-Perregaux is one of the oldest continuously operating watch manufactures in the world, with a history stretching back to 1791. The GP01800 automatic movement inside the Laureato is entirely in-house, with a micro-rotor visible through the sapphire caseback. It's the kind of detail that won't impress someone glancing at your wrist across a dinner table — but it will matter deeply to the person wearing it.</p>
+
+                    <p>The Laureato is not for everyone, and that is precisely the point. It is for the collector who has seen everything the usual suspects have to offer and hungers for something with equal craft but less fanfare. In a market saturated with safe choices, the Laureato is a quiet act of connoisseurship.</p>
+                `
+            },
+            {
+                id: 6,
+                title: "Tudor Black Bay 41 'Burgundy' — Heritage Without the Pretence",
+                deck: "Tudor's burgundy-bezeled Black Bay proves that serious horology doesn't require a five-figure price tag — just conviction, craft, and a sense of history.",
+                brand: "Tudor",
+                tags: ["Tudor", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "March 20, 2026",
+                image: "images/tudor-black-bay.png",
+                body: `
+                    <p>Tudor has spent the last decade pulling off one of the most remarkable repositionings in the watch industry. Once dismissed as Rolex's budget sibling — the little brother who got the hand-me-downs — Tudor has become, in the eyes of many serious collectors, something arguably more interesting: a brand with genuine heritage, in-house movements, and a design language that borrows from the past without being enslaved by it.</p>
+
+                    <p>The Black Bay 41 in burgundy is a perfect distillation of everything Tudor does right. The 41mm case hits the contemporary sweet spot — large enough to have wrist presence, small enough to slip under a cuff without drama. The burgundy anodised aluminum bezel insert is the hero of the design: rich, warm, and unmistakably Tudor. It evokes the brand's diving heritage without being a literal reissue of any single vintage reference.</p>
+
+                    <div class="pull-quote">"Tudor has mastered the art of making watches that feel like they've always existed — as though you're not buying a new watch, but rediscovering one that was waiting for you."</div>
+
+                    <p>The dial is a clean, domed black that plays beautifully against the burgundy bezel — a pairing that feels both classic and purposeful. The snowflake hands — Tudor's signature since the 1960s — cut through the dark dial with unmistakable clarity. Love them or not, they give the Black Bay an identity that no other brand can claim. The gilt accents on the hour markers and hands add just enough warmth to prevent the colour scheme from feeling cold.</p>
+
+                    <p>On the five-link bracelet with its satisfying riveted-link aesthetic, the Black Bay 41 wears with a confidence that belies its price point. This is not a watch that apologises for not being a Submariner. It is a watch that knows exactly what it is — and what it is, to my mind, is one of the most compelling daily-wear propositions available today.</p>
+
+                    <p>The in-house Manufacture Calibre MT5602-U movement, with its 70-hour power reserve and Master Chronometer certification, puts to rest any lingering questions about Tudor's mechanical credentials. This is not a fashion watch with a third-party movement dropped in for convenience. It is a thoroughly considered, thoroughly executed instrument from a manufacture that has earned its place at the table.</p>
+
+                    <p>For the collector who values substance over status — who understands that the worth of a watch is measured not by its waiting list but by its design, its movement, and the pleasure it brings to wear — the Tudor Black Bay 41 Burgundy is difficult to fault. It may well be the most satisfying watch purchase under five thousand euros.</p>
+                `
+            },
+            {
+                id: 1,
+                title: "The Omega Speedmaster 'Reverse Panda' — A Modern Icon Reborn",
+                deck: "Omega revisits the beloved Speedmaster with a striking black-and-white dial configuration that feels both vintage and thoroughly contemporary.",
+                brand: "Omega",
+                tags: ["Omega", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "March 18, 2026",
+                image: "images/omega-speedmaster.png",
+                body: `
+                    <p>There are watches that need no introduction, and then there is the Omega Speedmaster. But even within the Moonwatch lineage — a family tree as storied as any in horology — certain references manage to stand apart. The 2026 'Reverse Panda' is one of those watches.</p>
+
+                    <p>The configuration is deceptively simple: a black dial with three white sub-dials. It's the inverse of the classic 'Panda' layout that has graced so many celebrated chronographs over the decades. Yet in Omega's hands, executed on the current-generation Speedmaster Professional platform, it becomes something more — a study in contrast, legibility, and restrained drama.</p>
+
+                    <div class="pull-quote">"The reverse panda dial is one of those rare configurations where less decoration leads to more presence on the wrist."</div>
+
+                    <p>On the wrist, the Speedmaster Reverse Panda wears exactly as you'd expect from a 42mm Moonwatch — confidently, but without the bulk that plagues so many modern chronographs. The sapphire crystal — treated with anti-reflective coating on the inside — offers outstanding clarity and scratch resistance, letting the stepped black dial and its white sub-dials assert themselves with striking legibility. It's the kind of crystal that disappears on the wrist, drawing your eye straight to the dial rather than the glass above it, and the stepped dial catches the light in ways that photographs rarely capture.</p>
+
+                    <p>The bracelet deserves its own moment. The current five-link design is, to my eyes, the finest bracelet Omega has ever produced for the Speedmaster. The taper from lugs to clasp is subtle but meaningful, and the micro-adjust on the clasp means you can dial in the perfect fit regardless of the season. It's a far cry from the stamped-steel affairs of decades past.</p>
+
+                    <p>What strikes me most about this watch is its ability to exist in multiple contexts. It sits as comfortably with a suit as it does with a weekend sweater. It's a tool watch that doesn't feel like it's trying to prove anything — and perhaps that's the highest compliment one can pay a chronograph in 2026.</p>
+
+                    <p>At its current retail positioning, the Reverse Panda represents what I believe to be one of the strongest value propositions in the luxury chronograph space. Whether you're a seasoned collector or acquiring your first serious watch, this Speedmaster deserves a place on the shortlist.</p>
+                `
+            },
+            {
+                id: 2,
+                title: "Rolex GMT-Master II 'Zombie' — Two-Tone Done Right",
+                deck: "The Rolesor GMT-Master II in black and gold proves that two-tone doesn't have to mean loud — it can mean timeless.",
+                brand: "Rolex",
+                tags: ["Rolex", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "March 10, 2026",
+                image: "images/rolex-gmt-master.png",
+                body: `
+                    <p>There was a time, not so long ago, when two-tone watches were the punchline of a collector's joke. They were the domain of aftermarket dealers and Miami Vice reruns. But somewhere in the last few years, the conversation shifted — and the Rolex GMT-Master II in Oystersteel and Yellow Gold sits squarely at the center of that shift.</p>
+
+                    <p>Known among enthusiasts as the 'Zombie' — a nickname earned by its black and gold bezel that evokes something both dark and precious — this GMT-Master II is a watch that grows on you. Not in a subtle way, but in the way that great design always does: slowly at first, then all at once.</p>
+
+                    <div class="pull-quote">"Two-tone, when executed with this level of restraint and purpose, isn't a style choice — it's a statement of confidence."</div>
+
+                    <p>On the Jubilee bracelet, the Zombie finds its perfect companion. Where an Oyster bracelet might push the look toward the austere, the Jubilee softens things just enough. The interplay between polished center links and brushed outer links mirrors the steel-and-gold conversation happening on the case itself. It's cohesive in a way that feels engineered rather than accessorized.</p>
+
+                    <p>The dial is pure Rolex restraint. Black, clean, with just enough gold on the hands and hour markers to acknowledge the precious metal on the case without celebrating it to excess. The Cyclops-magnified date window at three o'clock is as polarizing as ever — you either see it as quintessentially Rolex, or you wish it weren't there. I fall firmly in the former camp.</p>
+
+                    <p>Wearing the Zombie daily for the past several weeks, I've come to appreciate how it straddles the line between dressy and sporty with remarkable ease. A houndstooth blazer feels right. A simple t-shirt feels equally right. That versatility is not to be underestimated — it's the mark of a watch that understands its wearer's life isn't lived in a single register.</p>
+
+                    <p>The GMT-Master II remains one of Rolex's most compelling complications for the practical traveler, and in this Rolesor execution, it gains a warmth and character that the full steel versions — magnificent as they are — simply don't possess.</p>
+                `
+            },
+            {
+                id: 3,
+                title: "Cartier Tank Must XL — The Quiet Radical",
+                deck: "In a world obsessed with sport watches and ceramic bezels, Cartier's Tank Must XL makes a compelling case for the elegant rectangle.",
+                brand: "Cartier",
+                tags: ["Cartier", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "February 25, 2026",
+                image: "images/cartier-tank.png",
+                body: `
+                    <p>To wear a Cartier Tank in 2026 is to make a quiet declaration. In an era where the wrist has become a proving ground for technical specifications, water resistance ratings, and movement finishing measured in microns, the Tank simply… exists. And in existing, it says more about its wearer than any GMT complication or tourbillon ever could.</p>
+
+                    <p>The Tank Must XL, sized generously for the modern wrist without betraying the proportions that Louis Cartier established over a century ago, is a masterclass in restraint. The silvered dial, the Roman numerals, the blued steel hands — these are elements that have remained essentially unchanged since 1917. That's not stagnation. That's conviction.</p>
+
+                    <div class="pull-quote">"The Tank doesn't compete with sport watches. It exists in an entirely different conversation — one about elegance, history, and the quiet confidence of knowing exactly what you are."</div>
+
+                    <p>On the wrist, paired with a taupe grained leather strap, the Tank Must XL sits flat and comfortable. At just 8.6mm thick, it slides under a shirt cuff with the kind of ease that round watches — even slim ones — can only envy. The sapphire cabochon on the crown adds a dot of jewel-like color that feels perfectly Cartier: decorative, purposeful, and just slightly indulgent.</p>
+
+                    <p>This particular example is part of my personal collection, and I'll confess that it took me years to arrive at the Tank. I was, like many collectors, drawn first to the mechanical complexity and sporting pedigree of the round watch. But there comes a point in every collecting journey where you begin to value the cerebral over the mechanical, the historical over the innovative. The Tank was waiting for me at that intersection.</p>
+
+                    <p>If I could recommend just one watch for a formal occasion — an important dinner, a milestone celebration, a moment that deserves to be marked with something beyond the ordinary — it would be this one. Not because it's the most expensive option, or the most technically impressive, but because it carries the weight of over a century of design excellence without ever feeling heavy.</p>
+
+                    <p>The Cartier Tank is not a trend. It's the antidote to trends.</p>
+                `
+            },
+            {
+                id: 4,
+                title: "Rolex Explorer II 'Polar' Ref. 226570 — The Understated Adventurer",
+                deck: "White dial, orange hand, and a no-nonsense attitude make the Explorer II one of the most quietly compelling watches in the Rolex catalog.",
+                brand: "Rolex",
+                tags: ["Rolex", "Personal Collection"],
+                author: "Christian Husegaard",
+                date: "February 12, 2026",
+                image: "images/rolex-explorer.png",
+                body: `
+                    <p>The Rolex Explorer II has always been the thinking collector's Rolex. It lacks the immediate recognition of the Submariner, the aspirational aura of the Daytona, and the flash of the Day-Date. What it has instead is something far more valuable: purpose, clarity, and a design that respects its wearer's intelligence.</p>
+
+                    <p>The Ref. 226570 in white — the so-called 'Polar' dial — is the current expression of this philosophy. The 42mm case wears true to size, with a presence that fills the wrist without overwhelming it. The fixed 24-hour bezel, with its engraved numerals on a brushed steel surround, gives the Explorer II its distinctive face — a face that's more tool than jewel, and all the better for it.</p>
+
+                    <div class="pull-quote">"The Explorer II doesn't ask to be noticed. It asks to be used. And in that distinction lies its enduring appeal."</div>
+
+                    <p>The white dial is the star here. Rolex's lacquered white is luminous without being sterile — it catches ambient light and returns it with a warmth that photographs consistently fail to convey. Against this clean canvas, the black hour markers and Mercedes hands read with absolute clarity at any angle. And then there's the orange GMT hand — a single stroke of color that is as functional as it is characterful, sweeping around the dial once every 24 hours.</p>
+
+                    <p>As a daily wearer and a cornerstone of my personal collection, the Polar Explorer II has proven itself in ways that extend beyond aesthetics. The Caliber 3285 movement is a genuine advancement over its predecessors, with a 70-hour power reserve that means you can set it down on Friday evening and pick it up Monday morning without missing a beat. The Oyster bracelet with its Easylink extension is Rolex's pragmatism distilled into steel — functional, reliable, and perfectly finished.</p>
+
+                    <p>What I find most compelling about the Explorer II is its resistance to trends. While other references in the Rolex catalog have become cultural signifiers — tokens of status or membership in some exclusive club — the Explorer II remains resolutely a watch. A watch for people who care about time, about legibility, about quiet quality. In a market often driven by hype and allocation games, the Polar Explorer II stands apart: available, excellent, and completely unbothered by the noise around it.</p>
+
+                    <p>If the Rolex catalog were a library, the Explorer II would be the well-worn hardcover on the middle shelf — not the flashy bestseller in the window, but the one that every serious reader eventually finds their way to.</p>
+                `
+            }
+        ];
+
+        // ===== STATE =====
+        let currentBrand = 'all';
+        let currentSearch = '';
+
+        // ===== RENDER FUNCTIONS =====
+        function renderArticleGrid() {
+            const grid = document.getElementById('articleGrid');
+            const filtered = articles.filter(a => {
+                const brandMatch = currentBrand === 'all' || a.tags.includes(currentBrand);
+                const searchMatch = currentSearch === '' ||
+                    a.title.toLowerCase().includes(currentSearch) ||
+                    a.deck.toLowerCase().includes(currentSearch) ||
+                    a.brand.toLowerCase().includes(currentSearch) ||
+                    a.tags.some(t => t.toLowerCase().includes(currentSearch));
+                return brandMatch && searchMatch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="no-results">No articles found. Try adjusting your filter or search.</div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(article => `
+                <article class="article-card" onclick="showArticle(${article.id})">
+                    <div class="article-card-image">
+                        <img src="${article.image}" alt="${article.title}" loading="lazy">
+                    </div>
+                    <div class="article-card-brand">${article.tags.join(' · ')}</div>
+                    <h2>${article.title}</h2>
+                    <p class="article-card-deck">${article.deck}</p>
+                    <div class="article-card-meta">
+                        <span class="article-card-meta-text">${article.author} · ${article.date}</span>
+                        <span class="card-like-count">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M7 10v12"/>
+                                <path d="M15 5.88L14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>
+                            </svg>
+                            <span class="card-likes-val" data-article-id="${article.id}">—</span>
+                        </span>
+                    </div>
+                </article>
+            `).join('');
+
+            // Populate like counts on cards after render
+            loadCardLikeCounts();
+        }
+
+        function showArticle(id) {
+            const article = articles.find(a => a.id === id);
+            if (!article) return;
+
+            const page = document.getElementById('articlePage');
+            page.innerHTML = `
+                <a class="article-page-back" onclick="showHomepage()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    Back to all articles
+                </a>
+                <div class="article-hero">
+                    <img src="${article.image}" alt="${article.title}">
+                </div>
+                <div class="article-content">
+                    <div class="brand-tag">${article.tags.join(' · ')}</div>
+                    <h1>${article.title}</h1>
+                    <p class="deck">${article.deck}</p>
+                    <div class="meta">By <strong>${article.author}</strong> · ${article.date}</div>
+                    <div class="article-body">
+                        ${article.body}
+                    </div>
+                    <div class="like-section">
+                        <span class="like-label">Did you enjoy this article?</span>
+                        <button
+                            class="like-btn ${hasLiked(article.id) ? 'liked' : ''}"
+                            id="like-btn-${article.id}"
+                            onclick="toggleLike(${article.id})"
+                            aria-label="Like this article"
+                        >
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M7 10v12"/>
+                                <path d="M15 5.88L14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>
+                            </svg>
+                            <span id="like-count-${article.id}">—</span>
+                            <span id="like-label-${article.id}">${hasLiked(article.id) ? 'Liked' : 'Like'}</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('homepage').style.display = 'none';
+            document.getElementById('aboutPage').classList.remove('active');
+            document.querySelector('.brand-filter-wrap').style.display = 'none';
+            page.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Load the real like count for this article from Firebase
+            loadArticleLikeCount(article.id);
+        }
+
+        function showHomepage() {
+            document.getElementById('articlePage').classList.remove('active');
+            document.getElementById('aboutPage').classList.remove('active');
+            document.getElementById('homepage').style.display = 'block';
+            document.querySelector('.brand-filter-wrap').style.display = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showAbout() {
+            document.getElementById('homepage').style.display = 'none';
+            document.getElementById('articlePage').classList.remove('active');
+            document.getElementById('aboutPage').classList.add('active');
+            document.querySelector('.brand-filter-wrap').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ===== FILTERS =====
+        function filterByBrand(brand, btn) {
+            currentBrand = brand;
+            document.querySelectorAll('.brand-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderArticleGrid();
+        }
+
+        function filterArticles() {
+            currentSearch = document.getElementById('searchInput').value.toLowerCase().trim();
+            renderArticleGrid();
+        }
+
+        // ===== INIT =====
+        renderArticleGrid();
+    </script>
+
+</body>
+</html>
