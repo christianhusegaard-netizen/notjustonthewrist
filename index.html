@@ -1364,9 +1364,43 @@
             loadCardLikeCounts();
         }
 
-        function showArticle(id) {
+        // ===== URL ROUTING =====
+        // Each article has a unique slug so it can be linked to directly,
+        // e.g. https://notjustonthewrist.com/#rolex-submariner-no-date-ref-124060
+        function slugify(str) {
+            return String(str)
+                .toLowerCase()
+                .replace(/[\u2010-\u2015\u2212]/g, '-')   // normalise dashes
+                .replace(/[''"`]/g, '')                    // strip quotes
+                .replace(/&/g, ' and ')
+                .replace(/[^a-z0-9]+/g, '-')               // non-alphanumerics -> hyphen
+                .replace(/^-+|-+$/g, '');                  // trim leading/trailing hyphens
+        }
+
+        function articleSlug(article) {
+            return slugify(article.title);
+        }
+
+        function findArticleByHash(hash) {
+            const cleaned = String(hash || '').replace(/^#/, '');
+            if (!cleaned) return null;
+            // Match by slug first, then fall back to id (e.g. #20)
+            return articles.find(a => articleSlug(a) === cleaned)
+                || articles.find(a => String(a.id) === cleaned)
+                || null;
+        }
+
+        function showArticle(id, opts) {
             const article = articles.find(a => a.id === id);
             if (!article) return;
+
+            // Update the URL hash so this view has a shareable link.
+            const desired = '#' + articleSlug(article);
+            if (!opts || !opts.skipHashUpdate) {
+                if (window.location.hash !== desired) {
+                    history.pushState({ articleId: article.id }, '', desired);
+                }
+            }
 
             const page = document.getElementById('articlePage');
             page.innerHTML = `
@@ -1414,12 +1448,16 @@
             loadArticleLikeCount(article.id);
         }
 
-        function showHomepage() {
+        function showHomepage(opts) {
             document.getElementById('articlePage').classList.remove('active');
             document.getElementById('aboutPage').classList.remove('active');
             document.getElementById('homepage').style.display = 'block';
             document.querySelector('.brand-filter-wrap').style.display = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Clear the hash so the URL reflects the homepage.
+            if ((!opts || !opts.skipHashUpdate) && window.location.hash) {
+                history.pushState({}, '', window.location.pathname + window.location.search);
+            }
         }
 
         function showAbout() {
@@ -1445,6 +1483,20 @@
 
         // ===== INIT =====
         renderArticleGrid();
+
+        // Route on initial load and when the hash changes (back/forward, or
+        // someone clicking a shared link to a specific article).
+        function routeFromHash() {
+            const article = findArticleByHash(window.location.hash);
+            if (article) {
+                showArticle(article.id, { skipHashUpdate: true });
+            } else {
+                showHomepage({ skipHashUpdate: true });
+            }
+        }
+        window.addEventListener('hashchange', routeFromHash);
+        window.addEventListener('popstate', routeFromHash);
+        routeFromHash();
     </script>
 
 </body>
