@@ -33,6 +33,38 @@ Background: To see how many visitors the site gets, which articles are most read
 - [ ] Add the tracking snippet to `index.html`
 - [ ] Verify data is flowing in the Analytics dashboard
 
+## "For Sale" Badge on Personal Collection Watches
+
+Background: Some watches in the Personal Collection are available for sale (e.g. the Rolex Sky-Dweller 42 mm). We want a small, tasteful "For Sale" badge to appear in the corner of the watch's image on both the article card (homepage grid) and the full article hero — making it clear at a glance which pieces are available, without disrupting the editorial tone of the site.
+
+Approach:
+- Add a single `forSale: true` field to any watch object in the article data that should carry the badge. Default for all others is no field (treated as not for sale). When a watch sells, just remove the field — the badge disappears.
+- Render a small pill or ribbon in the top-right corner of the article card image and the article hero image. Likely styling: white text on the existing `--accent` colour, small caps, light shadow, `border-radius` to match the rest of the site.
+- Gate visually to Personal Collection only (i.e. only shows on cards/articles tagged "Personal Collection"), so it never appears on Past Collection pieces.
+
+Steps:
+- [ ] Add `forSale: true` to the Rolex Sky-Dweller 42 mm article object in `index.html` (first test case).
+- [ ] Add a `.for-sale-badge` CSS rule (positioned absolute, top-right of the image container).
+- [ ] Update the article-card render function to inject the badge when `forSale` is true.
+- [ ] Update the article hero render to do the same on the full article page.
+- [ ] Decide the call-to-action: a small "Contact to enquire" line at the bottom of for-sale articles linking to the dedicated enquiry email (see "Dedicated Enquiry Email Address" below), vs. just leaving the badge as a visual flag.
+- [ ] Optional: add a "For Sale" filter chip to the brand strip so visitors can browse only watches that are available.
+- [ ] Test on desktop and mobile, including how the badge sits on different image crops.
+
+## Dedicated Enquiry Email Address
+
+Background: Once the "For Sale" badge is live (see section above), visitors will need a way to enquire about watches that are available. Rather than exposing your personal email, we'll set up a dedicated address for the site — also useful as a general contact point for reader correspondence and future enquiries.
+
+Address: `notjustonthewrist@gmail.com` (confirmed — matches the site domain).
+
+Steps:
+- [ ] Create the Gmail account `notjustonthewrist@gmail.com` at https://accounts.google.com/signup — choose a strong password and enable 2-Step Verification.
+- [ ] Set up forwarding (optional) so messages also land in your personal inbox, so you don't miss enquiries.
+- [ ] Add a short signature/auto-reply if desired (e.g. "Thanks for your message — I'll get back to you shortly. — Christian").
+- [ ] Wire the address into the "Contact to enquire" call-to-action on for-sale articles (`mailto:` link with a subject pre-filled, e.g. `Enquiry: Rolex Sky-Dweller 42 mm`).
+- [ ] Add the address to the about / contact page (see "Domain Reputation" section above) as the general contact email.
+- [ ] Consider a basic spam strategy: the `mailto:` will attract some bots over time. Options include obfuscating the address in the HTML, or using a simple contact form instead.
+
 ## Ideas & Future Improvements
 
 - [ ] (add ideas here)
