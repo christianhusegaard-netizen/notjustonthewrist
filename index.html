@@ -157,13 +157,10 @@
             margin: 0 auto;
             padding: 16px 24px;
             display: flex;
+            flex-wrap: wrap;
             gap: 8px;
-            overflow-x: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+            overflow: visible;
         }
-
-        .brand-filter::-webkit-scrollbar { display: none; }
 
         .brand-btn {
             padding: 7px 18px;
@@ -189,6 +186,51 @@
             background: var(--text);
             border-color: var(--text);
             color: var(--bg);
+        }
+
+        /* Dropdown grouping (e.g. "Other Watches" containing G-Shock + Seiko) */
+        .brand-btn-group {
+            position: relative;
+            display: inline-block;
+        }
+
+        .brand-dropdown-toggle::after {
+            content: " \25BE";
+            font-size: 0.7em;
+            margin-left: 4px;
+            opacity: 0.7;
+        }
+
+        .brand-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 6px;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 100;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            min-width: 150px;
+        }
+
+        .brand-btn-group:hover .brand-dropdown,
+        .brand-btn-group.open .brand-dropdown {
+            display: flex;
+        }
+
+        .brand-dropdown .brand-btn {
+            text-align: left;
+            border-color: transparent;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        .brand-dropdown .brand-btn:hover {
+            border-color: var(--accent);
         }
 
         /* ===== MAIN CONTENT ===== */
@@ -650,8 +692,13 @@
             <button class="brand-btn" data-brand="Tudor" onclick="filterByBrand('Tudor', this)">Tudor</button>
             <button class="brand-btn" data-brand="Girard-Perregaux" onclick="filterByBrand('Girard-Perregaux', this)">Girard-Perregaux</button>
             <button class="brand-btn" data-brand="Grand Seiko" onclick="filterByBrand('Grand Seiko', this)">Grand Seiko</button>
-            <button class="brand-btn" data-brand="G-Shock" onclick="filterByBrand('G-Shock', this)">G-Shock</button>
-            <button class="brand-btn" data-brand="Seiko" onclick="filterByBrand('Seiko', this)">Seiko</button>
+            <span class="brand-btn-group" id="otherWatchesGroup">
+                <button class="brand-btn brand-dropdown-toggle" data-brand="Other Watches" onclick="filterByBrand('Other Watches', this)">Other Watches</button>
+                <span class="brand-dropdown">
+                    <button class="brand-btn" data-brand="G-Shock" onclick="filterByBrand('G-Shock', this)">G-Shock</button>
+                    <button class="brand-btn" data-brand="Seiko" onclick="filterByBrand('Seiko', this)">Seiko</button>
+                </span>
+            </span>
             <button class="brand-btn" data-brand="Personal Collection" onclick="filterByBrand('Personal Collection', this)">Personal Collection</button>
             <button class="brand-btn" data-brand="Past Collection" onclick="filterByBrand('Past Collection', this)">Past Collection</button>
         </div>
@@ -920,7 +967,7 @@
                 title: "Seiko Premier Kinetic Perpetual SNP044P1 — The Quiet Engineer",
                 deck: "A gold-tone dress watch with a kinetic heart and a perpetual calendar mind — Seiko's Premier proves that Japanese ingenuity needs no Swiss postcode.",
                 brand: "Seiko",
-                tags: ["Seiko", "Personal Collection"],
+                tags: ["Seiko", "Other Watches", "Personal Collection"],
                 author: "Not Just on the Wrist",
                 date: "March 23, 2026",
                 image: "images/seiko-premier-kinetic.jpg",
@@ -945,7 +992,7 @@
                 title: "G-Shock 'Frogman' GWF-D1000 — The Digital Diver That Refuses to Quit",
                 deck: "With its triple sensor, ISO diver's certification, and unapologetic bulk, the GWF-D1000 is a digital tool watch taken to its logical extreme.",
                 brand: "G-Shock",
-                tags: ["G-Shock", "Personal Collection"],
+                tags: ["G-Shock", "Other Watches", "Personal Collection"],
                 author: "Not Just on the Wrist",
                 date: "March 23, 2026",
                 image: "images/gshock-frogman-gwfd1000.jpg",
@@ -970,7 +1017,7 @@
                 title: "G-Shock 'Frogman' GWF-A1000 — Analog Goes Deep",
                 deck: "Casio's first analog Frogman trades the digital display for sweeping hands and a carbon-reinforced case, bringing a new dimension to the iconic dive series.",
                 brand: "G-Shock",
-                tags: ["G-Shock", "Personal Collection"],
+                tags: ["G-Shock", "Other Watches", "Personal Collection"],
                 author: "Not Just on the Wrist",
                 date: "March 23, 2026",
                 image: "images/gshock-frogman-gwfa1000.jpg",
@@ -1120,7 +1167,7 @@
                 title: "Rolex Sea-Dweller Deepsea 44mm — Engineering for the Abyss",
                 deck: "At 44mm and rated to 3,900 metres, the Deepsea is Rolex's most extreme dive watch — a monument to over-engineering that somehow still works on dry land.",
                 brand: "Rolex",
-                tags: ["Rolex", "Personal Collection"],
+                tags: ["Rolex", "Past Collection"],
                 author: "Not Just on the Wrist",
                 date: "March 22, 2026",
                 image: "images/rolex-seadweller-deepsea.png",
@@ -1474,7 +1521,26 @@
             document.querySelectorAll('.brand-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             renderArticleGrid();
+
+            // Dropdown handling: tapping the parent toggle opens/keeps the
+            // dropdown for touch users; tapping any sub-option closes it.
+            const group = document.getElementById('otherWatchesGroup');
+            if (group) {
+                if (btn.classList.contains('brand-dropdown-toggle')) {
+                    group.classList.toggle('open');
+                } else {
+                    group.classList.remove('open');
+                }
+            }
         }
+
+        // Close the dropdown if the user taps outside it.
+        document.addEventListener('click', function (e) {
+            const group = document.getElementById('otherWatchesGroup');
+            if (group && !group.contains(e.target)) {
+                group.classList.remove('open');
+            }
+        });
 
         function filterArticles() {
             currentSearch = document.getElementById('searchInput').value.toLowerCase().trim();
