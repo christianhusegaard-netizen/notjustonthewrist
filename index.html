@@ -692,6 +692,83 @@
             opacity: 0.7;
         }
 
+        /* ===== USEFUL LINKS PAGE ===== */
+        .links-page {
+            display: none;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .links-page.active {
+            display: block;
+        }
+
+        .links-page h1 {
+            font-family: var(--serif);
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .links-page .links-subtitle {
+            font-family: var(--serif);
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .links-page .links-divider {
+            width: 60px;
+            height: 2px;
+            background: var(--accent);
+            margin-bottom: 40px;
+        }
+
+        .links-group {
+            margin-bottom: 40px;
+        }
+
+        .links-group h2 {
+            font-family: var(--serif);
+            font-size: 1.15rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .links-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .links-list li a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.0625rem;
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s, opacity 0.2s;
+        }
+
+        .links-list li a:hover {
+            border-bottom-color: var(--accent);
+            opacity: 0.8;
+        }
+
+        .links-list li a::after {
+            content: "↗";
+            font-size: 0.85em;
+            opacity: 0.6;
+        }
+
         /* ===== TRANSITIONS ===== */
         .homepage { transition: opacity 0.3s ease; }
         .article-page { transition: opacity 0.3s ease; }
@@ -802,6 +879,7 @@
                     </svg>
                     <input type="text" placeholder="Search articles..." id="searchInput" oninput="filterArticles()">
                 </div>
+                <a class="nav-link" onclick="showUsefulLinks()">Useful Links</a>
                 <a class="nav-link" onclick="showAbout()">About</a>
             </div>
         </div>
@@ -846,6 +924,41 @@
         <!-- ARTICLE PAGE (single view) -->
         <div class="article-page" id="articlePage">
             <!-- Rendered by JS -->
+        </div>
+
+        <!-- USEFUL LINKS PAGE -->
+        <div class="links-page" id="linksPage">
+            <h1>Useful Links</h1>
+            <p class="links-subtitle">A curated collection of watch resources</p>
+            <div class="links-divider"></div>
+
+            <div class="links-group">
+                <h2>Watch Block References</h2>
+                <ul class="links-list">
+                    <li><a href="https://www.fratello.com" target="_blank" rel="noopener">Fratello</a></li>
+                    <li><a href="https://www.hodinkee.com" target="_blank" rel="noopener">Hodinkee</a></li>
+                    <li><a href="https://monochrome-watches.com" target="_blank" rel="noopener">Monochrome</a></li>
+                    <li><a href="https://www.teddybaldassarre.com" target="_blank" rel="noopener">Teddy Baldassarre</a></li>
+                </ul>
+            </div>
+
+            <div class="links-group">
+                <h2>Watch Brands</h2>
+                <ul class="links-list">
+                    <li><a href="https://www.rolex.com" target="_blank" rel="noopener">Rolex</a></li>
+                    <li><a href="https://www.cartier.com" target="_blank" rel="noopener">Cartier</a></li>
+                    <li><a href="https://www.omegawatches.com" target="_blank" rel="noopener">Omega</a></li>
+                    <li><a href="https://www.grand-seiko.com" target="_blank" rel="noopener">Grand Seiko</a></li>
+                    <li><a href="https://www.jaeger-lecoultre.com" target="_blank" rel="noopener">Jaeger-LeCoultre</a></li>
+                </ul>
+            </div>
+
+            <div class="links-group">
+                <h2>Accessories &amp; Straps</h2>
+                <ul class="links-list">
+                    <li><a href="https://delugs.com" target="_blank" rel="noopener">Delugs</a></li>
+                </ul>
+            </div>
         </div>
 
         <!-- ABOUT PAGE -->
@@ -1730,6 +1843,8 @@
             const article = articles.find(a => a.id === id);
             if (!article) return;
 
+            document.getElementById('linksPage').classList.remove('active');
+
             // Update the URL hash so this view has a shareable link.
             const desired = '#' + articleSlug(article);
             if (!opts || !opts.skipHashUpdate) {
@@ -1797,6 +1912,7 @@
         function showHomepage(opts) {
             document.getElementById('articlePage').classList.remove('active');
             document.getElementById('aboutPage').classList.remove('active');
+            document.getElementById('linksPage').classList.remove('active');
             document.getElementById('homepage').style.display = 'block';
             document.querySelector('.brand-filter-wrap').style.display = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1809,7 +1925,17 @@
         function showAbout() {
             document.getElementById('homepage').style.display = 'none';
             document.getElementById('articlePage').classList.remove('active');
+            document.getElementById('linksPage').classList.remove('active');
             document.getElementById('aboutPage').classList.add('active');
+            document.querySelector('.brand-filter-wrap').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showUsefulLinks() {
+            document.getElementById('homepage').style.display = 'none';
+            document.getElementById('articlePage').classList.remove('active');
+            document.getElementById('aboutPage').classList.remove('active');
+            document.getElementById('linksPage').classList.add('active');
             document.querySelector('.brand-filter-wrap').style.display = 'none';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
