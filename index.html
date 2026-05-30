@@ -1923,22 +1923,28 @@
             }
         }
 
-        function showAbout() {
+        function showAbout(opts) {
             document.getElementById('homepage').style.display = 'none';
             document.getElementById('articlePage').classList.remove('active');
             document.getElementById('linksPage').classList.remove('active');
             document.getElementById('aboutPage').classList.add('active');
             document.querySelector('.brand-filter-wrap').style.display = 'none';
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (!opts || !opts.skipHashUpdate) {
+                history.pushState({}, '', window.location.pathname + window.location.search + '#about');
+            }
         }
 
-        function showUsefulLinks() {
+        function showUsefulLinks(opts) {
             document.getElementById('homepage').style.display = 'none';
             document.getElementById('articlePage').classList.remove('active');
             document.getElementById('aboutPage').classList.remove('active');
             document.getElementById('linksPage').classList.add('active');
             document.querySelector('.brand-filter-wrap').style.display = 'none';
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (!opts || !opts.skipHashUpdate) {
+                history.pushState({}, '', window.location.pathname + window.location.search + '#useful-links');
+            }
         }
 
         // ===== FILTERS =====
@@ -1980,11 +1986,18 @@
         // Route on initial load and when the hash changes (back/forward, or
         // someone clicking a shared link to a specific article).
         function routeFromHash() {
-            const article = findArticleByHash(window.location.hash);
-            if (article) {
-                showArticle(article.id, { skipHashUpdate: true });
+            const hash = window.location.hash;
+            if (hash === '#about') {
+                showAbout({ skipHashUpdate: true });
+            } else if (hash === '#useful-links') {
+                showUsefulLinks({ skipHashUpdate: true });
             } else {
-                showHomepage({ skipHashUpdate: true });
+                const article = findArticleByHash(hash);
+                if (article) {
+                    showArticle(article.id, { skipHashUpdate: true });
+                } else {
+                    showHomepage({ skipHashUpdate: true });
+                }
             }
         }
         window.addEventListener('hashchange', routeFromHash);
