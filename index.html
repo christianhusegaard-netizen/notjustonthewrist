@@ -1890,6 +1890,14 @@
                 }
             }
 
+            // Track article view in Google Analytics
+            if (typeof gtag === 'function') {
+                gtag('config', 'G-YYTVXZP9HH', {
+                    page_path: '/' + desired,
+                    page_title: article.title
+                });
+            }
+
             const page = document.getElementById('articlePage');
             const forSale = isForSale(article);
             const forSaleCta = forSale ? `
@@ -1969,6 +1977,9 @@
             if (!opts || !opts.skipHashUpdate) {
                 history.pushState({}, '', window.location.pathname + window.location.search + '#about');
             }
+            if (typeof gtag === 'function') {
+                gtag('config', 'G-YYTVXZP9HH', { page_path: '/#about', page_title: 'About' });
+            }
         }
 
         function showUsefulLinks(opts) {
@@ -1980,6 +1991,9 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
             if (!opts || !opts.skipHashUpdate) {
                 history.pushState({}, '', window.location.pathname + window.location.search + '#useful-links');
+            }
+            if (typeof gtag === 'function') {
+                gtag('config', 'G-YYTVXZP9HH', { page_path: '/#useful-links', page_title: 'Useful Links' });
             }
         }
 
