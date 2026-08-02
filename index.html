@@ -582,7 +582,29 @@
 
             .nav-logo { font-size: 1.25rem; }
 
-            .nav-search { flex: 0 1 180px; }
+            /* On narrow screens the logo + search + three nav links no
+               longer fit in one row. Rather than wrap (which pushes the
+               nav taller) or hide links, let nav-right scroll horizontally
+               so every link stays reachable — same pattern as the brand
+               filter strip below. */
+            .nav-inner { gap: 12px; }
+
+            .nav-right {
+                flex: 1 1 auto;
+                min-width: 0;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                gap: 18px;
+                -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 20px), transparent 100%);
+                mask-image: linear-gradient(to right, #000 calc(100% - 20px), transparent 100%);
+            }
+            .nav-right::-webkit-scrollbar { display: none; }
+
+            .nav-search { flex: 0 0 180px; }
+            .nav-link { flex: 0 0 auto; }
 
             .page-header h1 { font-size: 1.75rem; }
             .page-header p { font-size: 0.95rem; }
