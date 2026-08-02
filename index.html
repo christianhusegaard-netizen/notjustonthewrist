@@ -778,6 +778,229 @@
             opacity: 0.6;
         }
 
+        /* ===== TECHNICAL DRAWINGS PAGE ===== */
+        .drawings-page {
+            display: none;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .drawings-page.active {
+            display: block;
+        }
+
+        .drawings-page h1 {
+            font-family: var(--serif);
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .drawings-page .drawings-subtitle {
+            font-family: var(--serif);
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            max-width: 680px;
+        }
+
+        .drawings-page .drawings-divider {
+            width: 60px;
+            height: 2px;
+            background: var(--accent);
+            margin-bottom: 32px;
+        }
+
+        .drawings-page .drawings-intro {
+            max-width: 680px;
+            margin-bottom: 48px;
+        }
+
+        .drawings-page .drawings-intro p {
+            font-size: 1.0625rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .drawings-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .drawing-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .drawing-card.highlight {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(184, 149, 106, 0.25);
+        }
+
+        .drawing-card-image {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            overflow: hidden;
+            cursor: zoom-in;
+            background: #0d1b2e;
+        }
+
+        .drawing-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .drawing-card-image:hover img {
+            transform: scale(1.02);
+        }
+
+        .drawing-card-body {
+            padding: 20px 22px 24px;
+        }
+
+        .drawing-card-brand {
+            font-family: var(--sans);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .drawing-card h3 {
+            font-family: var(--serif);
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+            margin-bottom: 10px;
+        }
+
+        .drawing-card-ref {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 14px;
+        }
+
+        .drawing-card-link {
+            font-size: 0.9rem;
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid var(--accent);
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .drawing-card-link:hover {
+            opacity: 0.7;
+        }
+
+        .drawings-empty {
+            max-width: 680px;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .drawings-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ===== TECHNICAL DRAWING LIGHTBOX ===== */
+        .drawing-lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 10, 10, 0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            cursor: zoom-out;
+        }
+
+        .drawing-lightbox.active {
+            display: flex;
+        }
+
+        .drawing-lightbox img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .drawing-lightbox-close {
+            position: absolute;
+            top: 24px;
+            right: 32px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: var(--sans);
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            opacity: 0.8;
+        }
+
+        .drawing-lightbox-close:hover {
+            opacity: 1;
+        }
+
+        /* CTA linking an article to its technical drawing — same visual
+           language as the for-sale CTA, in the accent's blue-leaning
+           neutral so it doesn't compete with the for-sale treatment. */
+        .drawing-cta {
+            margin-top: 40px;
+            padding: 24px 28px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: rgba(184, 149, 106, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .drawing-cta .drawing-cta-label {
+            font-family: var(--sans);
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        .drawing-cta .drawing-cta-text {
+            font-family: var(--serif);
+            font-size: 1.0625rem;
+            line-height: 1.6;
+            color: var(--text);
+            margin: 0;
+        }
+
+        .drawing-cta a.drawing-cta-link {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid var(--accent);
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .drawing-cta a.drawing-cta-link:hover {
+            opacity: 0.7;
+        }
+
         /* ===== TRANSITIONS ===== */
         .homepage { transition: opacity 0.3s ease; }
         .article-page { transition: opacity 0.3s ease; }
@@ -888,6 +1111,7 @@
                     </svg>
                     <input type="text" placeholder="Search articles..." id="searchInput" oninput="filterArticles()">
                 </div>
+                <a class="nav-link" onclick="showTechnicalDrawings()">Technical Drawings</a>
                 <a class="nav-link" onclick="showUsefulLinks()">Useful Links</a>
                 <a class="nav-link" onclick="showAbout()">About</a>
             </div>
@@ -987,7 +1211,28 @@
             <p>If you'd like to get in touch — to share thoughts on a piece, or to enquire about a watch you've seen on these pages — you can reach me at <a id="aboutEnquiryLink" class="about-enquiry-link" onclick="openAboutEnquiry(event)" rel="nofollow">[email loading…]</a>.</p>
             <p class="about-signature">— Not Just on the Wrist, Copenhagen</p>
         </div>
+
+        <!-- TECHNICAL DRAWINGS PAGE -->
+        <div class="drawings-page" id="drawingsPage">
+            <h1>Technical Drawings</h1>
+            <p class="drawings-subtitle">Not just on the wrist — sometimes it's on the drafting table</p>
+            <div class="drawings-divider"></div>
+            <div class="drawings-intro">
+                <p>There's a particular pleasure in seeing a watch reduced to its dimensions — the diameter, the lug-to-lug, the thickness to the hundredth of a millimetre, laid out like a blueprint rather than a photograph. It's the same instinct that makes a cutaway diagram of an engine more interesting than a photo of the car: you're looking at the decisions, not just the result.</p>
+                <p>This section is where that instinct gets some room to breathe. Rather than write about how a watch wears, feels, or catches the light, each entry here strips a piece from the collection down to its technical drawing — case construction, movement specification, dial finishing, down to the tolerances the manufacture actually printed on its own spec sheet. It's slower, nerdier, and considerably less romantic than the rest of this site. I like it for exactly that reason.</p>
+                <p>I'll be adding one of these for every watch in the collection, gradually, as I get around to producing them — so consider this section permanently under construction. Click any drawing to view it full size, or jump through to the full story behind the watch.</p>
+            </div>
+            <div class="drawings-grid" id="drawingsGrid">
+                <!-- Drawings rendered by JS -->
+            </div>
+        </div>
     </main>
+
+    <!-- TECHNICAL DRAWING LIGHTBOX -->
+    <div class="drawing-lightbox" id="drawingLightbox" onclick="closeDrawingLightbox()">
+        <span class="drawing-lightbox-close" onclick="closeDrawingLightbox()">Close ✕</span>
+        <img id="drawingLightboxImg" src="" alt="">
+    </div>
 
     <!-- FOOTER -->
     <footer>
@@ -1287,6 +1532,7 @@
                 author: "Not Just on the Wrist",
                 date: "June 10, 2026",
                 image: "images/patek-calatrava-6119g.jpg",
+                technicalDrawingSlug: "patek-philippe-calatrava-6119g-001",
                 body: `
                     <p>Some watches you come to quickly. Others you arrive at only after a long and genuinely honest conversation with yourself about what you actually want a watch to do — not on paper, not in a catalogue, but on your wrist, at a dinner table, on the occasion that matters most. The Patek Philippe Calatrava reference 6119G in white gold with a charcoal dial belongs firmly to the second category. And after considering the Vacheron Constantin Traditionelle, the A. Lange &amp; Söhne Saxonia, the Rolex 1908, and more than a few other possibilities, I can say with certainty that the right decision reveals itself not through elimination alone, but through the moment one option stops being a contender and starts being the answer.</p>
 
@@ -1899,6 +2145,23 @@
             }
         ];
 
+        // ===== TECHNICAL DRAWINGS DATA =====
+        // A separate, much smaller collection from `articles`. Each entry
+        // is a blueprint-style technical drawing for one watch, optionally
+        // linked back to the full story about that watch via `articleId`.
+        // Add new entries here as more drawings get made — the grid and
+        // routing below pick them up automatically.
+        const technicalDrawings = [
+            {
+                id: 1,
+                slug: "patek-philippe-calatrava-6119g-001",
+                watchName: "Patek Philippe Calatrava",
+                reference: "6119G-001",
+                image: "images/patek-calatrava-6119g-technical-drawing.png",
+                articleId: 21
+            }
+        ];
+
         // ===== STATE =====
         let currentBrand = 'all';
         let currentSearch = '';
@@ -1957,6 +2220,45 @@
             loadCardLikeCounts();
         }
 
+        function renderDrawingsGrid() {
+            const grid = document.getElementById('drawingsGrid');
+            if (!grid) return;
+
+            if (technicalDrawings.length === 0) {
+                grid.outerHTML = '<div class="drawings-empty" id="drawingsGrid">No drawings yet — check back soon.</div>';
+                return;
+            }
+
+            grid.innerHTML = technicalDrawings.map(drawing => {
+                const article = articles.find(a => a.id === drawing.articleId);
+                return `
+                    <article class="drawing-card" id="drawing-card-${drawing.slug}">
+                        <div class="drawing-card-image" onclick="openDrawingLightbox('${drawing.image}', '${drawing.watchName.replace(/'/g, "\\'")}')">
+                            <img src="${drawing.image}" alt="${drawing.watchName} — technical drawing" loading="lazy">
+                        </div>
+                        <div class="drawing-card-body">
+                            <div class="drawing-card-brand">Technical Drawing</div>
+                            <h3>${drawing.watchName}</h3>
+                            <div class="drawing-card-ref">Reference ${drawing.reference}</div>
+                            ${article ? `<a class="drawing-card-link" onclick="showArticle(${article.id})">Read the full story →</a>` : ''}
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        function openDrawingLightbox(src, alt) {
+            const lightbox = document.getElementById('drawingLightbox');
+            const img = document.getElementById('drawingLightboxImg');
+            img.src = src;
+            img.alt = alt;
+            lightbox.classList.add('active');
+        }
+
+        function closeDrawingLightbox() {
+            document.getElementById('drawingLightbox').classList.remove('active');
+        }
+
         // ===== URL ROUTING =====
         // Each article has a unique slug so it can be linked to directly,
         // e.g. https://notjustonthewrist.com/#rolex-submariner-no-date-ref-124060
@@ -1988,6 +2290,7 @@
             if (!article) return;
 
             document.getElementById('linksPage').classList.remove('active');
+            document.getElementById('drawingsPage').classList.remove('active');
 
             // Update the URL hash so this view has a shareable link.
             const desired = '#' + articleSlug(article);
@@ -2014,6 +2317,18 @@
                 </aside>
             ` : '';
 
+            // If this watch has a matching entry in Technical Drawings,
+            // link out to it — set via the article's `technicalDrawingSlug`.
+            const linkedDrawing = article.technicalDrawingSlug
+                ? technicalDrawings.find(d => d.slug === article.technicalDrawingSlug)
+                : null;
+            const drawingCta = linkedDrawing ? `
+                <aside class="drawing-cta" aria-label="View technical drawing">
+                    <span class="drawing-cta-label">Technical drawing</span>
+                    <p class="drawing-cta-text">See the full blueprint for this watch — dimensions, movement spec, and case construction — in the <a class="drawing-cta-link" onclick="showTechnicalDrawings({ highlightSlug: '${linkedDrawing.slug}' })">Technical Drawings</a> section.</p>
+                </aside>
+            ` : '';
+
             page.innerHTML = `
                 <a class="article-page-back" onclick="showHomepage()">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
@@ -2032,6 +2347,7 @@
                         ${article.body}
                     </div>
                     ${forSaleCta}
+                    ${drawingCta}
                     <div class="like-section">
                         <span class="like-label">Did you enjoy this article?</span>
                         <button
@@ -2065,6 +2381,7 @@
             document.getElementById('articlePage').classList.remove('active');
             document.getElementById('aboutPage').classList.remove('active');
             document.getElementById('linksPage').classList.remove('active');
+            document.getElementById('drawingsPage').classList.remove('active');
             document.getElementById('homepage').style.display = 'block';
             document.querySelector('.brand-filter-wrap').style.display = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2078,6 +2395,7 @@
             document.getElementById('homepage').style.display = 'none';
             document.getElementById('articlePage').classList.remove('active');
             document.getElementById('linksPage').classList.remove('active');
+            document.getElementById('drawingsPage').classList.remove('active');
             document.getElementById('aboutPage').classList.add('active');
             document.querySelector('.brand-filter-wrap').style.display = 'none';
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2093,6 +2411,7 @@
             document.getElementById('homepage').style.display = 'none';
             document.getElementById('articlePage').classList.remove('active');
             document.getElementById('aboutPage').classList.remove('active');
+            document.getElementById('drawingsPage').classList.remove('active');
             document.getElementById('linksPage').classList.add('active');
             document.querySelector('.brand-filter-wrap').style.display = 'none';
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2101,6 +2420,44 @@
             }
             if (typeof gtag === 'function') {
                 gtag('config', 'G-YYTVXZP9HH', { page_path: '/#useful-links', page_title: 'Useful Links' });
+            }
+        }
+
+        function showTechnicalDrawings(opts) {
+            opts = opts || {};
+            document.getElementById('homepage').style.display = 'none';
+            document.getElementById('articlePage').classList.remove('active');
+            document.getElementById('aboutPage').classList.remove('active');
+            document.getElementById('linksPage').classList.remove('active');
+            document.getElementById('drawingsPage').classList.add('active');
+            document.querySelector('.brand-filter-wrap').style.display = 'none';
+
+            renderDrawingsGrid();
+
+            if (!opts.skipHashUpdate) {
+                const hash = opts.highlightSlug ? '#technical-drawing-' + opts.highlightSlug : '#technical-drawings';
+                history.pushState({}, '', window.location.pathname + window.location.search + hash);
+            }
+            if (typeof gtag === 'function') {
+                gtag('config', 'G-YYTVXZP9HH', { page_path: '/#technical-drawings', page_title: 'Technical Drawings' });
+            }
+
+            // Highlight and scroll to a specific drawing, if requested —
+            // used when a story links through to its own blueprint.
+            document.querySelectorAll('.drawing-card.highlight').forEach(el => el.classList.remove('highlight'));
+            if (opts.highlightSlug) {
+                requestAnimationFrame(() => {
+                    const card = document.getElementById('drawing-card-' + opts.highlightSlug);
+                    if (card) {
+                        card.classList.add('highlight');
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        setTimeout(() => card.classList.remove('highlight'), 2500);
+                    } else {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
@@ -2138,6 +2495,7 @@
 
         // ===== INIT =====
         renderArticleGrid();
+        renderDrawingsGrid();
         populateAboutEnquiry();
 
         // Route on initial load and when the hash changes (back/forward, or
@@ -2148,6 +2506,10 @@
                 showAbout({ skipHashUpdate: true });
             } else if (hash === '#useful-links') {
                 showUsefulLinks({ skipHashUpdate: true });
+            } else if (hash === '#technical-drawings') {
+                showTechnicalDrawings({ skipHashUpdate: true });
+            } else if (hash.startsWith('#technical-drawing-')) {
+                showTechnicalDrawings({ skipHashUpdate: true, highlightSlug: hash.replace('#technical-drawing-', '') });
             } else {
                 const article = findArticleByHash(hash);
                 if (article) {
