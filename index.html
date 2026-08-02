@@ -438,6 +438,12 @@
         /* ===== ARTICLE PAGE ===== */
         .article-page {
             display: none;
+            /* This page (and the about/links/drawings pages below) hide the
+               brand-filter-wrap, which is what normally pushes <main> clear
+               of the fixed nav on the homepage. Without it, main's own
+               padding-top isn't enough and content starts underneath the
+               nav — so these pages need their own clearance instead. */
+            margin-top: calc(var(--nav-height) - 24px);
         }
 
         .article-page.active {
@@ -609,6 +615,8 @@
             .page-header h1 { font-size: 1.75rem; }
             .page-header p { font-size: 0.95rem; }
 
+            .about-page h1, .links-page h1, .drawings-page h1 { font-size: 1.75rem; }
+
             .article-grid {
                 grid-template-columns: 1fr;
                 gap: 36px;
@@ -667,6 +675,7 @@
             display: none;
             max-width: 680px;
             margin: 0 auto;
+            margin-top: calc(var(--nav-height) - 24px);
         }
 
         .about-page.active {
@@ -728,6 +737,7 @@
             display: none;
             max-width: 680px;
             margin: 0 auto;
+            margin-top: calc(var(--nav-height) - 24px);
         }
 
         .links-page.active {
@@ -805,6 +815,7 @@
             display: none;
             max-width: var(--max-width);
             margin: 0 auto;
+            margin-top: calc(var(--nav-height) - 24px);
         }
 
         .drawings-page.active {
