@@ -810,6 +810,215 @@
             opacity: 0.6;
         }
 
+        /* ===== NEWSLETTERS ===== */
+        .newsletters-page {
+            display: none;
+            max-width: 760px;
+            margin: 0 auto;
+            margin-top: calc(var(--nav-height) - 24px);
+        }
+
+        .newsletters-page.active {
+            display: block;
+        }
+
+        .newsletters-page h1 {
+            font-family: var(--serif);
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .newsletters-page .nl-subtitle {
+            font-family: var(--serif);
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .newsletters-page .nl-divider {
+            width: 60px;
+            height: 2px;
+            background: var(--accent);
+            margin-bottom: 40px;
+        }
+
+        .nl-archive {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+
+        .nl-archive-item {
+            display: block;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 28px 30px;
+            cursor: pointer;
+            transition: transform 0.3s ease, border-color 0.2s;
+        }
+
+        .nl-archive-item:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+        }
+
+        .nl-kicker {
+            font-family: var(--sans);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .nl-archive-item h2 {
+            font-family: var(--serif);
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+
+        .nl-archive-item p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .nl-back {
+            display: inline-block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            margin-bottom: 28px;
+            transition: color 0.2s;
+        }
+
+        .nl-back:hover { color: var(--accent); }
+
+        .nl-intro {
+            font-family: var(--serif);
+            font-size: 1.2rem;
+            font-style: italic;
+            line-height: 1.7;
+            color: var(--text);
+            margin-bottom: 44px;
+        }
+
+        .nl-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .nl-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 28px 30px;
+        }
+
+        .nl-card-num {
+            font-family: var(--serif);
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
+        .nl-card h3 {
+            font-family: var(--serif);
+            font-size: 1.4rem;
+            font-weight: 700;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+            margin-bottom: 12px;
+        }
+
+        .nl-card-facts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 20px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            padding: 10px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .nl-card-facts strong {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .nl-card p {
+            font-size: 1rem;
+            line-height: 1.75;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+
+        .nl-card-links a {
+            display: inline-block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid var(--accent);
+            margin: 0 18px 6px 0;
+            white-space: nowrap;
+            transition: opacity 0.2s;
+        }
+
+        .nl-card-links a:hover { opacity: 0.7; }
+
+        .nl-closing {
+            border-top: 1px solid var(--border);
+            padding-top: 32px;
+            margin-bottom: 40px;
+        }
+
+        .nl-closing p {
+            font-size: 1.0625rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .nl-signature {
+            font-family: var(--serif);
+            font-size: 1.25rem;
+            font-style: italic;
+            color: var(--accent);
+            margin-top: 20px;
+        }
+
+        .nl-soon {
+            border: 1px dashed var(--border);
+            border-radius: 4px;
+            padding: 22px 26px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .newsletters-page h1 { font-size: 1.75rem; }
+            .nl-archive-item, .nl-card { padding: 22px 20px; }
+            .nl-card h3 { font-size: 1.2rem; }
+            .nl-intro { font-size: 1.1rem; }
+        }
+
         /* ===== TECHNICAL DRAWINGS PAGE ===== */
         .drawings-page {
             display: none;
@@ -1144,6 +1353,7 @@
                     </svg>
                     <input type="text" placeholder="Search articles..." id="searchInput" oninput="filterArticles()">
                 </div>
+                <a class="nav-link" onclick="showNewsletters()">Newsletters</a>
                 <a class="nav-link" onclick="showTechnicalDrawings()">Technical Drawings</a>
                 <a class="nav-link" onclick="showUsefulLinks()">Useful Links</a>
                 <a class="nav-link" onclick="showAbout()">About</a>
@@ -1260,6 +1470,9 @@
                 <!-- Drawings rendered by JS -->
             </div>
         </div>
+
+        <!-- NEWSLETTERS PAGE (archive + single issue, rendered by JS) -->
+        <div class="newsletters-page" id="newslettersPage"></div>
     </main>
 
     <!-- TECHNICAL DRAWING LIGHTBOX -->
@@ -2482,6 +2695,7 @@
 
             document.getElementById('linksPage').classList.remove('active');
             document.getElementById('drawingsPage').classList.remove('active');
+            document.getElementById('newslettersPage').classList.remove('active');
 
             // Update the URL hash so this view has a shareable link.
             const desired = '#' + articleSlug(article);
@@ -2573,6 +2787,7 @@
             document.getElementById('aboutPage').classList.remove('active');
             document.getElementById('linksPage').classList.remove('active');
             document.getElementById('drawingsPage').classList.remove('active');
+            document.getElementById('newslettersPage').classList.remove('active');
             document.getElementById('homepage').style.display = 'block';
             document.querySelector('.brand-filter-wrap').style.display = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2587,6 +2802,7 @@
             document.getElementById('articlePage').classList.remove('active');
             document.getElementById('linksPage').classList.remove('active');
             document.getElementById('drawingsPage').classList.remove('active');
+            document.getElementById('newslettersPage').classList.remove('active');
             document.getElementById('aboutPage').classList.add('active');
             document.querySelector('.brand-filter-wrap').style.display = 'none';
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2603,6 +2819,7 @@
             document.getElementById('articlePage').classList.remove('active');
             document.getElementById('aboutPage').classList.remove('active');
             document.getElementById('drawingsPage').classList.remove('active');
+            document.getElementById('newslettersPage').classList.remove('active');
             document.getElementById('linksPage').classList.add('active');
             document.querySelector('.brand-filter-wrap').style.display = 'none';
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2620,6 +2837,7 @@
             document.getElementById('articlePage').classList.remove('active');
             document.getElementById('aboutPage').classList.remove('active');
             document.getElementById('linksPage').classList.remove('active');
+            document.getElementById('newslettersPage').classList.remove('active');
             document.getElementById('drawingsPage').classList.add('active');
             document.querySelector('.brand-filter-wrap').style.display = 'none';
 
@@ -2649,6 +2867,131 @@
                 });
             } else {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // ===== NEWSLETTERS =====
+        // To publish a new issue: copy the object below, paste it at the TOP of
+        // this list, and change the content. The layout never needs to change.
+        const newsletters = [
+            {
+                slug: '2026-09',
+                issue: 1,
+                month: 'September 2026',
+                teaser: 'A Padellone from Rolex, a 30th-birthday Overseas, and stone dials for under €2,000.',
+                intro: "September is always a busy month, and with Geneva Watch Days this year it was busier than ever. I've picked ten new watches that caught my eye, from a €1,700 stone dial to a Vacheron I'll be daydreaming about for weeks. As always, I care more about how a watch looks and feels than what's inside it. Grab a coffee and enjoy.",
+                watches: [
+                    { brand: 'Rolex', model: 'Perpetual Padellone', ref: 'M53505 · M53506', price: 'CHF 52,500–64,800',
+                      summary: 'Rolex rarely looks backwards this openly, and I love that it did. The Padellone nods to the 1949 ref. 8171, a cult vintage piece nicknamed “the big frying pan”. The new 39mm version comes in Everose gold with a grained white dial, or platinum with ice blue — both with a fluted bezel and meteorite moonphase, day and month in small windows under twelve. The most elegant Rolex in years, and the quietest.',
+                      source: 'Monochrome', url: 'https://monochrome-watches.com/2026-rolex-perpetual-padellone-annual-calendar-moonphase-dynapulse-53505-53506-review-video-price/',
+                      brandUrl: 'https://newsroom.rolex.com/watches/new-watches/perpetual-padellone' },
+                    { brand: 'Vacheron Constantin', model: 'Overseas Perpetual Calendar Ultra-Thin, 30th Anniversary', ref: '4300V/220G-H119', price: 'CHF 120,000 · 200 pieces',
+                      summary: "Thirty years of the Overseas, and Vacheron marks it with the prettiest blue I've seen on one. The 41.5mm white gold case is just 8.1mm thin, and the lacquered azure dial shifts from sky to steel as it catches the light. Snailed calendar counters are sunk into the dial, with a white gold moon at six. Two rubber straps, white and denim blue, make it surprisingly playful. And yes, as an Overseas owner, I'm biased.",
+                      source: 'Monochrome', url: 'https://monochrome-watches.com/vacheron-constantin-celebrates-30-years-of-overseas-special-edition-perpetual-calendar-ultra-thin/' },
+                    { brand: 'Glashütte Original', model: '70s Collection', ref: '1-36-11-01-02-71 and others', price: '€13,100–16,200',
+                      summary: "Glashütte Original's square 70s gets a smaller, sharper 39mm case and three textured dials named after hi-fi gear: Vinyl Record in black, Tweed Amp in brown and Stereo Panel in silver. The names made me smile, but the dials earn them — they look properly tactile. It wears thin at 9.6mm, with a 100-hour power reserve. A German integrated-bracelet watch with real personality.",
+                      source: 'Monochrome', url: 'https://monochrome-watches.com/2026-new-glashutte-original-70s-collection-time-and-date-integrated-sports-watch-introducing-price/' },
+                    { brand: 'Zenith', model: 'Chronomaster Solo Sport', ref: '', price: 'CHF 8,900–9,900',
+                      summary: "Zenith took the Chronomaster Sport's look and removed the chronograph. What's left is a clean 40mm steel sports watch with a ceramic bezel and ceramic dials in white, black or brown. Look closely and a repeated “Z” pattern runs across the dial, a subtle wink at the fast-beating El Primero inside. With or without date, and 200m water resistance. This is the Zenith I'd actually wear every day.",
+                      source: 'Monochrome', url: 'https://monochrome-watches.com/zenith-chronomaster-solo-sport-time-only-high-frequency-el-primero-review-video-price/' },
+                    { brand: 'Girard-Perregaux', model: 'Laureato Fifty Tourbillon 39mm', ref: '99116-11-3528-1CM', price: 'Price to be announced',
+                      summary: 'The Laureato is one of my favourite shapes in watchmaking, and this one is a treat. The 39mm steel case is just 10mm thick despite the tourbillon at six, held under a lyre-shaped white gold bridge. Choose a deep blue Grand Feu enamel dial over Clous de Paris, or a warm rose-gold tone. Steel outside, fine craft inside — the understated luxury Girard-Perregaux does best.',
+                      source: 'Monochrome', url: 'https://monochrome-watches.com/2026-girard-perregaux-laureato-fifty-tourbillon-micro-rotor-39mm-review/' },
+                    { brand: 'Doxa', model: 'SUB 300 Ti5', ref: '', price: '€2,990',
+                      summary: "Doxa's SUB 300 is pure 1960s dive-watch attitude, and it now comes in grade 5 titanium. The 42.5mm cushion case keeps its classic proportions but should wear much lighter, with a domed sapphire crystal on top. Six dials, from the signature Professional Orange to Sea Emerald Green and a fully luminous WhitePearl. Cheerful, colourful and under €3,000 — exactly the kind of watch that makes this hobby fun.",
+                      source: 'Monochrome', url: 'https://monochrome-watches.com/introducing-doxa-sub-300-ti5-titanium-dive-watch-geneva-watch-days-specs-price-review/' },
+                    { brand: 'Louis Vuitton', model: 'Monterey Ceramic', ref: 'W0CR11 · W0CR21', price: '€23,000',
+                      summary: "Louis Vuitton's first watch, the 1988 LV II by architect Gae Aulenti, returns as a pebble in ceramic. No lugs, the crown at twelve, and the strap attaches through the caseback, so the 37mm case looks like a smooth stone on the wrist. Choose black with a white dial and red hands, or green with a green dial and yellow hands. It's design-led, a little eccentric, and I can't stop looking at the green one.",
+                      source: 'SJX', url: 'https://watchesbysjx.com/2026/09/louis-vuitton-monterey-ceramic.html' },
+                    { brand: 'Panerai', model: 'Luminor Firenze 8 Giorni', ref: 'PAM01794 · PAM01734', price: '€10,700 / €55,000',
+                      summary: "Panerai's Florence boutique turns 100, and the celebration is classic Luminor: 44mm, sandwich dial, crown-protecting bridge and eight days of power. The steel version has a black dial with blue hands; the Platinumtech one goes green with gold-toned hands. A domed crystal recalls the old Perspex Luminors, and the straps carry the Florentine lily. Big, bold and very Italian — a proper birthday present from Florence.",
+                      source: 'Monochrome', url: 'https://monochrome-watches.com/panerai-celebrates-100-years-in-florence-with-the-luminor-firenze-8-giorni-pam01734-and-pam01794-review-price/' },
+                    { brand: 'Longines', model: 'Spirit Pilot & Spirit Pilot Flyback, Sky Blue', ref: 'L3.809.4.93 · L3.721.4.93', price: '€2,600–5,400',
+                      summary: "Longines gives the Spirit Pilot a matte sky-blue dial, and it suits the collection perfectly. The 39mm time-only version is the sweet spot for me: clean, no date, applied numerals and a 72-hour movement. The Flyback chronograph adds a blue ceramic bezel and a box sapphire crystal for a bit more drama. Both come on steel bracelet or blue rubber. Honest, handsome pilot's watches at a fair price.",
+                      source: 'Monochrome', url: 'https://monochrome-watches.com/longines-spirit-pilot-and-spirit-pilot-flyback-blue-dials-2026-review-price/' },
+                    { brand: 'Nivada Grenchen', model: 'F77 MKII 100 Years', ref: '', price: '€1,660–1,870',
+                      summary: 'Nivada Grenchen turns 100 and gives its integrated-bracelet F77 real stone dials: azurite, labradorite, jade, black opal, shungite and smoky quartz, plus an ice agate edition of 100 pieces. No two dials are alike. The 38mm case is now slimmer, and a new movement brings 68 hours of power reserve. At well under €2,000, this is the easiest way I know to wear a piece of natural art every day.',
+                      source: 'Monochrome', url: 'https://monochrome-watches.com/the-new-nivada-grenchen-f77-mkii-100-years-brings-stone-dials-and-a-more-powerful-movement-review-price/' }
+                ],
+                closing: "That's September. If I had to pick one, it would be the green Louis Vuitton — not the most sensible choice, but the one I keep coming back to. See you on the first of November."
+            }
+        ];
+
+        function nlEsc(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function hideAllPagesForNewsletters() {
+            document.getElementById('homepage').style.display = 'none';
+            document.getElementById('articlePage').classList.remove('active');
+            document.getElementById('aboutPage').classList.remove('active');
+            document.getElementById('linksPage').classList.remove('active');
+            document.getElementById('drawingsPage').classList.remove('active');
+            document.querySelector('.brand-filter-wrap').style.display = 'none';
+            document.getElementById('newslettersPage').classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showNewsletters(opts) {
+            hideAllPagesForNewsletters();
+            const items = newsletters.map(n => `
+                <a class="nl-archive-item" onclick="showNewsletterIssue('${n.slug}')">
+                    <div class="nl-kicker">Issue ${n.issue} · ${nlEsc(n.month)}</div>
+                    <h2>The Monthly Launch Edit</h2>
+                    <p>${nlEsc(n.teaser)}</p>
+                </a>`).join('');
+            document.getElementById('newslettersPage').innerHTML = `
+                <h1>Newsletters</h1>
+                <p class="nl-subtitle">The Monthly Launch Edit — ten new watches, on the first of every month</p>
+                <div class="nl-divider"></div>
+                <div class="nl-archive">${items}</div>
+                <div class="nl-soon">Email subscriptions are coming soon.</div>`;
+            if (!opts || !opts.skipHashUpdate) {
+                history.pushState({}, '', window.location.pathname + window.location.search + '#newsletters');
+            }
+            if (typeof gtag === 'function') {
+                gtag('config', 'G-YYTVXZP9HH', { page_path: '/#newsletters', page_title: 'Newsletters' });
+            }
+        }
+
+        function showNewsletterIssue(slug, opts) {
+            const n = newsletters.find(x => x.slug === slug);
+            if (!n) { showNewsletters(opts); return; }
+            hideAllPagesForNewsletters();
+            const cards = n.watches.map((w, i) => `
+                <article class="nl-card" id="nl-watch-${i + 1}">
+                    <div class="nl-card-num">No. ${String(i + 1).padStart(2, '0')}</div>
+                    <div class="nl-kicker">${nlEsc(w.brand)}</div>
+                    <h3>${nlEsc(w.model)}</h3>
+                    <div class="nl-card-facts">
+                        ${w.ref ? `<span>Ref. <strong>${nlEsc(w.ref)}</strong></span>` : ''}
+                        <span><strong>${nlEsc(w.price)}</strong></span>
+                    </div>
+                    <p>${nlEsc(w.summary)}</p>
+                    <div class="nl-card-links">
+                        <a href="${nlEsc(w.url)}" target="_blank" rel="noopener">Read more at ${nlEsc(w.source)} →</a>
+                        ${w.brandUrl ? `<a href="${nlEsc(w.brandUrl)}" target="_blank" rel="noopener">${nlEsc(w.brand)} →</a>` : ''}
+                    </div>
+                </article>`).join('');
+            document.getElementById('newslettersPage').innerHTML = `
+                <a class="nl-back" onclick="showNewsletters()">← All newsletters</a>
+                <div class="nl-kicker">Issue ${n.issue} · ${nlEsc(n.month)}</div>
+                <h1>The Monthly Launch Edit</h1>
+                <div class="nl-divider" style="margin-top:24px"></div>
+                <p class="nl-intro">${nlEsc(n.intro)}</p>
+                <div class="nl-cards">${cards}</div>
+                <div class="nl-closing">
+                    <p>${nlEsc(n.closing)}</p>
+                    <p class="nl-signature">— Not Just on the Wrist</p>
+                </div>
+                <div class="nl-soon">Email subscriptions are coming soon.</div>`;
+            const hash = '#newsletter-' + n.slug;
+            if (!opts || !opts.skipHashUpdate) {
+                history.pushState({}, '', window.location.pathname + window.location.search + hash);
+            }
+            if (typeof gtag === 'function') {
+                gtag('config', 'G-YYTVXZP9HH', { page_path: '/' + hash, page_title: 'The Monthly Launch Edit — ' + n.month });
             }
         }
 
@@ -2699,6 +3042,10 @@
                 showUsefulLinks({ skipHashUpdate: true });
             } else if (hash === '#technical-drawings') {
                 showTechnicalDrawings({ skipHashUpdate: true });
+            } else if (hash === '#newsletters') {
+                showNewsletters({ skipHashUpdate: true });
+            } else if (hash.startsWith('#newsletter-')) {
+                showNewsletterIssue(hash.replace('#newsletter-', ''), { skipHashUpdate: true });
             } else if (hash.startsWith('#technical-drawing-')) {
                 showTechnicalDrawings({ skipHashUpdate: true, highlightSlug: hash.replace('#technical-drawing-', '') });
             } else {
