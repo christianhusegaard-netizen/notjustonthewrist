@@ -2952,7 +2952,7 @@
         // the photos in images/newsletters/<slug>/ named 01.jpg … 10.jpg (the
         // card number). .png and .webp also work. A watch can instead point
         // to any file with an  image: 'images/…'  field. No photo = no image box.
-        const NL_PHOTO_EXT = ['jpg', 'jpeg', 'png', 'webp'];
+        const NL_PHOTO_EXT = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'webp', 'WEBP'];  // web servers treat .jpg and .JPG as different names
 
         function nlPhotoSrc(n, w, i, attempt) {
             if (w.image) return w.image;
