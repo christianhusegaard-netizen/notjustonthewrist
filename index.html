@@ -927,6 +927,29 @@
             padding: 28px 30px;
         }
 
+        /* Optional photo at the top of each newsletter card. Shown only when an
+           image file exists; otherwise the card stays text-only. */
+        .nl-card-photo {
+            margin: -28px -30px 24px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            border-radius: 4px 4px 0 0;
+            overflow: hidden;
+            aspect-ratio: 3 / 2;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nl-card-photo.loaded { display: flex; }
+
+        .nl-card-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
         .nl-card-num {
             font-family: var(--serif);
             font-size: 0.95rem;
@@ -1015,6 +1038,7 @@
         @media (max-width: 768px) {
             .newsletters-page h1 { font-size: 1.75rem; }
             .nl-archive-item, .nl-card { padding: 22px 20px; }
+            .nl-card-photo { margin: -22px -20px 20px; }
             .nl-card h3 { font-size: 1.2rem; }
             .nl-intro { font-size: 1.1rem; }
         }
@@ -2923,6 +2947,28 @@
                 .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
+        // ----- Newsletter photos -----
+        // Photos are picked up automatically by file name. For each issue, put
+        // the photos in images/newsletters/<slug>/ named 01.jpg … 10.jpg (the
+        // card number). .png and .webp also work. A watch can instead point
+        // to any file with an  image: 'images/…'  field. No photo = no image box.
+        const NL_PHOTO_EXT = ['jpg', 'jpeg', 'png', 'webp'];
+
+        function nlPhotoSrc(n, w, i, attempt) {
+            if (w.image) return w.image;
+            return 'images/newsletters/' + n.slug + '/' + String(i + 1).padStart(2, '0') + '.' + NL_PHOTO_EXT[attempt];
+        }
+
+        function nlPhotoFallback(img) {
+            const next = Number(img.dataset.try) + 1;
+            if (!img.dataset.fixed && next < NL_PHOTO_EXT.length) {
+                img.dataset.try = next;
+                img.src = 'images/newsletters/' + img.dataset.slug + '/' + String(img.dataset.num).padStart(2, '0') + '.' + NL_PHOTO_EXT[next];
+            } else {
+                img.parentElement.remove();
+            }
+        }
+
         function hideAllPagesForNewsletters() {
             document.getElementById('homepage').style.display = 'none';
             document.getElementById('articlePage').classList.remove('active');
@@ -2962,6 +3008,11 @@
             hideAllPagesForNewsletters();
             const cards = n.watches.map((w, i) => `
                 <article class="nl-card" id="nl-watch-${i + 1}">
+                    <div class="nl-card-photo">
+                        <img src="${nlEsc(nlPhotoSrc(n, w, i, 0))}" alt="${nlEsc(w.brand + ' ' + w.model)}"
+                             data-slug="${nlEsc(n.slug)}" data-num="${i + 1}" data-try="0" ${w.image ? 'data-fixed="1"' : ''}
+                             onload="this.parentElement.classList.add('loaded')" onerror="nlPhotoFallback(this)">
+                    </div>
                     <div class="nl-card-num">No. ${String(i + 1).padStart(2, '0')}</div>
                     <div class="nl-kicker">${nlEsc(w.brand)}</div>
                     <h3>${nlEsc(w.model)}</h3>
