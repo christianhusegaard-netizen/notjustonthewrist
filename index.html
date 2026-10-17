@@ -950,6 +950,30 @@
             display: block;
         }
 
+        /* Desktop: photo on the right of the text. Mobile keeps photo on top. */
+        @media (min-width: 769px) {
+            .nl-card:has(.nl-card-photo.loaded) {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) 36%;
+                column-gap: 30px;
+                align-items: start;
+            }
+            .nl-card:has(.nl-card-photo.loaded) > * { grid-column: 1; }
+            .nl-card:has(.nl-card-photo.loaded) > .nl-card-photo {
+                grid-column: 2;
+                grid-row: 1 / span 6;
+                margin: 0;
+                aspect-ratio: auto;
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                align-self: center;
+            }
+            .nl-card:has(.nl-card-photo.loaded) > .nl-card-photo img {
+                height: auto;
+                max-height: 420px;
+            }
+        }
+
         .nl-card-num {
             font-family: var(--serif);
             font-size: 0.95rem;
